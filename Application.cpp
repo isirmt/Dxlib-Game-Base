@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include "Application.h"
 #include "DxLib.h"
-
-std::unique_ptr<Application> Application::pinstance_ = nullptr;
+#include "TopScene.h"
 
 Application::Application() : running(true), requestedReseting(false)
 {
@@ -11,36 +10,50 @@ Application::Application() : running(true), requestedReseting(false)
 	{
 		exit(EXIT_FAILURE);
 	}
-	std::cout << "Initialized" << std::endl;
+
+	ChangeWindowMode(TRUE);
+	
+	ChangeScene(std::make_shared<TopScene>());
 }
 
 Application& Application::GetInstance()
 {
-	if (!pinstance_) {
-		pinstance_ = std::unique_ptr<Application>(
-			new Application());
-	}
+	static Application instance;
 
-	return *pinstance_;
+	return instance;
+}
+
+void Application::ChangeScene(std::shared_ptr<Scene> newScene)
+{
+	currentScene_ = std::move(newScene);
+	currentScene_->Start();
 }
 
 void Application::Update()
 {
+	if (currentScene_) {
+		currentScene_->Update();
+
+		if (requestedReseting) {
+			requestedReseting = false;
+			currentScene_->Reset();
+		}
+	}
 }
 
 void Application::Render()
 {
+	if (currentScene_) {
+		currentScene_->Render();
+	}
 }
 
 void Application::Run()
 {
-	//while (running)
-	//{
-	//	Update();
-	//	Render();
-	//}
-	DrawPixel(320, 240, GetColor(255, 255, 255));
-	WaitKey();
-	DxLib_End();
+	while (running && !ScreenFlip() && !ProcessMessage() && !ClearDrawScreen()) {
+		SetDrawScreen(DX_SCREEN_BACK);
+		Update();
+		Render();
+	}
 	exit(EXIT_SUCCESS);
 }

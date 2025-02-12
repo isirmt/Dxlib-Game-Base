@@ -1,14 +1,13 @@
 #pragma once
 #include <memory>
+#include "Scene.h"
 
 class Application
 {
 private:
-	static std::unique_ptr<Application> pinstance_;
-
 	bool running;
 	bool requestedReseting;
-	//std::shared_ptr<Scene> currentScene_;
+	std::shared_ptr<Scene> currentScene_;
 
 protected:
 
@@ -23,6 +22,8 @@ public:
 	Application& operator=(const Application&) = delete;
 
 	static Application& GetInstance();
+
+	void ChangeScene(std::shared_ptr<Scene> newScene);
 
 	void Run();
 };
