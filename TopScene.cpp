@@ -1,14 +1,18 @@
 #include "TopScene.h"
 #include <memory>
 #include "TransformComponent.h"
-#include "PointUIComponent.h"
+#include "Point2DComponent.h"
+#include "Rect2DComponent.h"
 #include "DxLib.h"
 
 void TopScene::Start()
 {
-	auto point2d = std::make_shared<GameObject>("point2d");
-	point2d->AddComponent<TransformComponent>(320, 240);
-	point2d->AddComponent<PointUIComponent>(GetColor(255, 0, 0));
-
-	AddObject(point2d);
+	AddObject(std::make_shared<GameObject>("point2d")->
+		AddComponent<TransformComponent>(320, 240)->
+		AddComponent<Point2DComponent>(GetColor(255, 0, 0))
+	);
+	AddObject(std::make_shared<GameObject>("rect2d")->
+		AddComponent<TransformComponent>(500, 300)->
+		AddComponent<Rect2DComponent>(200, 50, GetColor(255, 255, 0))
+	);
 }

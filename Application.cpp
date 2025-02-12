@@ -6,12 +6,13 @@
 
 Application::Application() : running(true), requestedReseting(false)
 {
+	SetGraphMode(1280, 720, 32);
+	ChangeWindowMode(TRUE);
+
 	if (DxLib_Init() == -1)
 	{
 		exit(EXIT_FAILURE);
 	}
-
-	ChangeWindowMode(TRUE);
 	
 	ChangeScene(std::make_shared<TopScene>());
 }
