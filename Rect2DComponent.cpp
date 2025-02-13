@@ -6,6 +6,13 @@
 void Rect2DComponent::Render(GameObject& obj)
 {
 	auto transform = obj.GetComponent<TransformComponent>();
-	// カメラコンポーネント追加時に変更
-	DrawBox(transform->x, transform->y, sx + transform->x, sy + transform->y, color, true);
+	if (!transform) return;
+
+	float x = transform->worldX;
+	float y = transform->worldY;
+
+	float width = sx * transform->worldScaleX;
+	float height = sy * transform->worldScaleY;
+
+	DrawBoxAA(x, y, x + width, y + height, color, true);
 }

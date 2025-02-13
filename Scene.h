@@ -4,7 +4,12 @@
 
 class Scene
 {
-	std::vector<std::shared_ptr<GameObject>> objects;
+	std::vector<GameObjectPtr> objects;
+	std::vector<GameObjectPtr> cameras;
+	std::vector<GameObjectPtr> uiObjects;
+
+protected:
+	int offscreenHandle = 0;
 
 public:
 	Scene() = default;
@@ -16,6 +21,8 @@ public:
 	virtual void Start() = 0;
 	virtual void Reset();
 
-	void AddObject(std::shared_ptr<GameObject> obj);
+	void AddObject(GameObjectPtr obj);
+	void AddCamera(GameObjectPtr obj);
+	void AddUIObject(GameObjectPtr obj);
 };
 

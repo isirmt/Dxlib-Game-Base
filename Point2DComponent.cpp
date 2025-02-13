@@ -6,6 +6,10 @@
 void Point2DComponent::Render(GameObject& obj)
 {
 	auto transform = obj.GetComponent<TransformComponent>();
-	// カメラコンポーネント追加時に変更
-	DrawPixel(transform->x, transform->y, color);
+	if (!transform) return;
+
+	float x = transform->worldX;
+	float y = transform->worldY;
+
+	DrawPixel(static_cast<int>(x), static_cast<int>(y), color);
 }
