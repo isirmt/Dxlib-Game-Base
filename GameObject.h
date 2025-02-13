@@ -21,10 +21,11 @@ public:
 
 	template <typename T, typename... Args>
 		requires std::is_constructible_v<T, Args...>
-	GameObjectPtr AddComponent(Args&&... args)
+	std::shared_ptr<T> AddComponent(Args&&... args)
 	{
-		components_[typeid(T)] = std::make_shared<T>(std::forward<Args>(args)...);
-		return shared_from_this();
+		auto comp = std::make_shared<T>(std::forward<Args>(args)...);
+		components_[typeid(T)] = comp;
+		return comp;
 	}
 
 	template <typename T>
