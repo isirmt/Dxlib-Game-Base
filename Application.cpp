@@ -7,6 +7,7 @@
 Application::Application() : running(true), requestedReseting(false)
 {
 	SetGraphMode(1280, 720, 32);
+	SetWindowSize(1280, 720);
 	ChangeWindowMode(TRUE);
 
 	if (DxLib_Init() == -1)
@@ -51,7 +52,7 @@ void Application::Render()
 
 void Application::Run()
 {
-	while (running && !ScreenFlip() && !ProcessMessage() && !ClearDrawScreen()) {
+	while (running && !ScreenFlip() && !ProcessMessage() && !ClearDrawScreen() && !clsDx()) {
 		SetDrawScreen(DX_SCREEN_BACK);
 		Update();
 		Render();

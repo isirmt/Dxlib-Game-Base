@@ -5,7 +5,7 @@ void Camera2DComponent::Render(int offscreenHandle) const
 {
 	DrawRectExtendGraph(
 		destX, destY, destX + destWidth, destY + destHeight,
-		srcX, srcY, srcX + srcWidth, srcY + srcHeight,
+		srcX, srcY, srcWidth, srcHeight,
 		offscreenHandle, TRUE
 	);
 }

@@ -4,11 +4,35 @@
 #include "Point2DComponent.h"
 #include "Rect2DComponent.h"
 #include "Camera2DComponent.h"
+#include "ButtonComponent.h"
 #include "DxLib.h"
+#include "CameraMouseCoordinateConverter.h"
 
 void TopScene::Start()
 {
-	offscreenHandle = MakeScreen(1920, 1080, true);
+	offscreenHandle = MakeScreen(1280, 720, true);
+
+	//GameObjectPtr camera1 = std::make_shared<GameObject>("camera1");
+	//camera1->AddComponent<Camera2DComponent>(
+	//	0, 0, 1280, 720,
+	//	0, 0, 1280, 720
+	//);
+	//AddCamera(camera1);
+
+	GameObjectPtr camera1 = std::make_shared<GameObject>("camera1");
+	camera1->AddComponent<Camera2DComponent>(
+		0, 0, 1280 / 2, 720,
+		0, 0, 1280 / 2, 720
+	);
+	AddCamera(camera1);
+
+	GameObjectPtr camera2 = std::make_shared<GameObject>("camera2");
+	camera2->AddComponent<Camera2DComponent>(
+		1280 / 2, 0, 1280 / 2, 720,
+		1280 / 2 + 0 /* Test */, 0, 1280 / 2, 720
+	);
+	AddCamera(camera2);
+
 
 	GameObjectPtr point2d = std::make_shared<GameObject>("point2d");
 	point2d->AddComponent<TransformComponent>(320.f, 240.f);
@@ -17,17 +41,17 @@ void TopScene::Start()
 
 	GameObjectPtr rect2d = std::make_shared<GameObject>("rect2d");
 	rect2d->AddComponent<TransformComponent>(500.f, 300.f);
-	rect2d->AddComponent<Rect2DComponent>(200.f, 50.f, GetColor(255, 255, 0));
+	rect2d->AddComponent<Rect2DComponent>(400.f, 100.f, GetColor(255, 255, 0));
 	AddObject(rect2d);
 
+	GameObjectPtr wButton1 = std::make_shared<GameObject>("wButton1");
+	wButton1->AddComponent<TransformComponent>(800.f, 600.f);
+	wButton1->AddComponent<Rect2DComponent>(200.f, 40.f, GetColor(0, 0, 255));
+	auto wButton1BComp = wButton1->AddComponent<ButtonComponent>();
+	wButton1BComp->cameraSelector = cameraSelector;
+	wButton1BComp->AddOnClickListener(std::bind(&TopScene::OnButtonClickedMember, this));
+	AddObject(wButton1);
 
-	GameObjectPtr camera1 = std::make_shared<GameObject>("camera1");
-	camera1->AddComponent<Camera2DComponent>(0, 0, 1920 / 2, 1080 / 2, 0, 0, 1920 / 2, 1080 / 2);
-	AddCamera(camera1);
-
-	GameObjectPtr camera2 = std::make_shared<GameObject>("camera2");
-	camera2->AddComponent<Camera2DComponent>(1920 / 2 + 1, 1080 / 2 + 1, 1920 / 2, 1080 / 2, 1920 / 2 + 1, 1080 / 2 + 1, 1920 / 2, 1080 / 2);
-	AddCamera(camera2);
 
 	GameObjectPtr canvas = std::make_shared<GameObject>("canvas");
 	canvas->AddComponent<TransformComponent>(0.f, 0.f);
@@ -38,4 +62,18 @@ void TopScene::Start()
 
 	canvas->AddChild(canvasButton);
 	AddUIObject(canvas);
+}
+
+void TopScene::OnButtonClickedMember()
+{
+	int randX = GetRand(1280);
+	int randY = GetRand(720);
+	int r = GetRand(256);
+	int g = GetRand(256);
+	int b = GetRand(256);
+
+	GameObjectPtr randomRectObj = std::make_shared<GameObject>("randomRect");
+	randomRectObj->AddComponent<TransformComponent>(static_cast<float>(randX), static_cast<float>(randY));
+	randomRectObj->AddComponent<Rect2DComponent>(50.f, 50.f, GetColor(r, g, b));
+	this->AddObject(randomRectObj);
 }

@@ -8,5 +8,8 @@ public:
 	TopScene() {}
 
 	void Start() override;
+
+private:
+	void OnButtonClickedMember();
 };
 
