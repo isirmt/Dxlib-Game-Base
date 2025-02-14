@@ -1,10 +1,14 @@
 #pragma once
 #include "Component.h"
+#include <list>
 
 class TransformComponent :
 	public Component
 {
 public:
+	std::shared_ptr<GameObject> parent;
+	std::list<std::shared_ptr<GameObject>> children;
+
 	// ÉçÅ[ÉJÉãïœä∑
 	float localX, localY;
 	float localRotation;
@@ -19,6 +23,8 @@ public:
 		: localX(x), localY(y), localRotation(rotation), localScaleX(scaleX), localScaleY(scaleY),
 		worldX(x), worldY(y), worldRotation(rotation), worldScaleX(scaleX), worldScaleY(scaleY) {
 	}
+
+	void SetParent(std::shared_ptr<GameObject> newParent);
 
 	void UpdateWorldTransform(GameObject& obj);
 

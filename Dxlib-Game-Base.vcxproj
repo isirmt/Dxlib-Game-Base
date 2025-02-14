@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="AutoDestroyComponent.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="Camera2DComponent.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
@@ -162,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="AutoDestroyComponent.h" />
     <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="Camera2DComponent.h" />
     <ClInclude Include="CameraMouseCoordinateConverter.h" />

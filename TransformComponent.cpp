@@ -4,11 +4,24 @@
 #include "GameObject.h"
 #include <cmath>
 
+void TransformComponent::SetParent(std::shared_ptr<GameObject> newParent)
+{
+	if (auto currentObj = GetGameObject()) {
+		if (parent) {
+			auto& siblings = parent->GetComponent<TransformComponent>()->children;
+			siblings.erase(std::remove(siblings.begin(), siblings.end(), currentObj), siblings.end());
+		}
+		parent = newParent;
+		if (parent) {
+			parent->GetComponent<TransformComponent>()->children.push_back(currentObj);
+		}
+	}
+}
+
 void TransformComponent::UpdateWorldTransform(GameObject& obj)
 {
-	// parent‚Ìƒ|ƒCƒ“ƒ^‚ðlock
-	if (auto parentPtr = obj.parent.lock()) {
-		if (auto parentTransform = parentPtr->GetComponent<TransformComponent>()) {
+	if (parent) {
+		if (auto parentTransform = parent->GetComponent<TransformComponent>()) {
 			float pX = parentTransform->worldX;
 			float pY = parentTransform->worldY;
 			float pRot = parentTransform->worldRotation;
