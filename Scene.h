@@ -4,6 +4,8 @@
 #include <memory>
 #include "GameObject.h"
 #include "IMouseCameraSelector.h"
+#include "RenderTarget.h"
+#include <unordered_map>
 
 class Scene : public std::enable_shared_from_this<Scene>
 {
@@ -12,6 +14,7 @@ class Scene : public std::enable_shared_from_this<Scene>
 protected:
 	int offscreenHandle = 0;
 	std::shared_ptr<IMouseCameraSelector> cameraSelector;
+	std::unordered_map<int, std::shared_ptr<RenderTarget>> renderTargets;
 
 public:
 	Scene() : cameraSelector(std::make_shared<IMouseCameraSelector>()) {};
@@ -24,6 +27,8 @@ public:
 	virtual void Reset();
 
 	void AddObject(GameObjectPtr obj);
+
+	void RegisterRenderTarget(int layer, int width, int height);
 
 private:
 	void ProcessPending();

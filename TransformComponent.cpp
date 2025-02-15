@@ -14,6 +14,7 @@ void TransformComponent::SetParent(std::shared_ptr<GameObject> newParent)
 		parent = newParent;
 		if (parent) {
 			parent->GetComponent<TransformComponent>()->children.push_back(currentObj);
+			UpdateWorldTransform(*GetGameObject());
 		}
 	}
 }

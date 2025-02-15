@@ -4,7 +4,6 @@
 #include <memory>
 #include <string>
 #include "Component.h"
-//#include "TransformComponent.h"
 
 using GameObjectPtr = std::shared_ptr<GameObject>;
 using ComponentPtr = std::shared_ptr<Component>;
@@ -14,11 +13,14 @@ class GameObject : public std::enable_shared_from_this<GameObject>
 	std::unordered_map<std::type_index, ComponentPtr> components_;
 	std::vector<std::string> tags;
 	bool shouldDestroy;
+	int layer = 0;
 
 public:
 	std::string name;
 
-	GameObject(std::string _name);
+	GameObject(std::string _name)
+		: name(_name), shouldDestroy(false) {
+	}
 
 	template <typename T, typename... Args>
 		requires std::is_constructible_v<T, Args...>
@@ -46,6 +48,9 @@ public:
 	bool HasTag(std::string tag) {
 		return std::find(tags.begin(), tags.end(), tag) != tags.end();
 	}
+
+	void SetLayer(int _layer) { layer = _layer; }
+	int GetLayer() const { return layer; }
 
 	void Destroy() {
 		shouldDestroy = true;

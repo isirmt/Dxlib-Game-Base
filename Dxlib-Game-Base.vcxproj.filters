@@ -60,12 +60,6 @@
     <ClCompile Include="Rect2DComponent.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
-    <ClCompile Include="CameraComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera2DComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="IMouseCoordinateConverter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -75,14 +69,26 @@
     <ClCompile Include="CameraMouseCoordinateConverter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ButtonComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="IMouseCameraSelector.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="AutoDestroyComponent.cpp">
+    <ClCompile Include="RenderTarget.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoDestroyComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera2DComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="DragComponent.cpp">
+      <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -110,9 +116,6 @@
     <ClInclude Include="Rect2DComponent.h">
       <Filter>ヘッダー ファイル\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Camera2DComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="IMouseCoordinateConverter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -122,14 +125,23 @@
     <ClInclude Include="CameraMouseCoordinateConverter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ButtonComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="IMouseCameraSelector.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="AutoDestroyComponent.h">
+    <ClInclude Include="RenderTarget.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera2DComponent.h">
+      <Filter>ヘッダー ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="DragComponent.h">
+      <Filter>ヘッダー ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoDestroyComponent.h">
+      <Filter>ヘッダー ファイル\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonComponent.h">
+      <Filter>ヘッダー ファイル\Component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

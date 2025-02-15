@@ -52,7 +52,7 @@ void Application::Render()
 
 void Application::Run()
 {
-	while (running && !ScreenFlip() && !ProcessMessage() && !ClearDrawScreen() && !clsDx()) {
+	while (running && !ScreenFlip() && !ProcessMessage() && !clsDx()) {
 		SetDrawScreen(DX_SCREEN_BACK);
 		Update();
 		Render();
