@@ -26,8 +26,8 @@ public:
 
 	void SetParent(std::shared_ptr<GameObject> newParent);
 
-	void UpdateWorldTransform(GameObject& obj);
+	void UpdateWorldTransform();
 
-	void Update(GameObject& obj) override;
+	void Update() override;
 };
 

@@ -9,6 +9,6 @@ public:
 	
 	Rect2DComponent(float _sx, float _sy, unsigned int _color) : sx(_sx), sy(_sy), color(_color) {}
 
-	void Render(GameObject& obj) override;
+	void Render() override;
 };
 

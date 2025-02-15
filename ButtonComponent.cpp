@@ -34,10 +34,10 @@ void ButtonComponent::AddOnClickEndListener(Callback callback)
 	onClickEndFuncs.push_back(callback);
 }
 
-void ButtonComponent::Update(GameObject& obj)
+void ButtonComponent::Update()
 {
-	auto transform = obj.GetComponent<TransformComponent>();
-	auto rect = obj.GetComponent<Rect2DComponent>();
+	auto transform = GetGameObject()->GetComponent<TransformComponent>();
+	auto rect = GetGameObject()->GetComponent<Rect2DComponent>();
 
 	if (!transform && !rect) return;
 
@@ -48,7 +48,7 @@ void ButtonComponent::Update(GameObject& obj)
 
 	std::shared_ptr<IMouseCoordinateConverter> converter;
 	if (cameraSelector) {
-		converter = cameraSelector->GetCurrentMouseConverter(obj.GetLayer());
+		converter = cameraSelector->GetCurrentMouseConverter(GetGameObject()->GetLayer());
 	}
 	else {
 		converter = std::make_shared<UIMouseCoordinateConverter>();
@@ -61,7 +61,7 @@ void ButtonComponent::Update(GameObject& obj)
 	GetMousePoint(&mouseScreenX, &mouseScreenY);
 	converter->Convert(mouseScreenX, mouseScreenY, convertedX, convertedY);
 
-	printfDx("%s(%s):\n", obj.name.c_str(), GetMouseInput() & MOUSE_INPUT_LEFT ? "CLICKED" : "-");
+	printfDx("%s(%s):\n", GetGameObject()->name.c_str(), GetMouseInput() & MOUSE_INPUT_LEFT ? "CLICKED" : "-");
 	printfDx("(%d,%d) W%d H%d\n", x, y, sx, sy);
 	printfDx("mouse_screen: %d, %d:\n", mouseScreenX, mouseScreenY);
 	printfDx("converted_sc: %d, %d:\n", convertedX, convertedY);

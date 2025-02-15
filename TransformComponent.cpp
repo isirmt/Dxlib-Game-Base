@@ -14,12 +14,12 @@ void TransformComponent::SetParent(std::shared_ptr<GameObject> newParent)
 		parent = newParent;
 		if (parent) {
 			parent->GetComponent<TransformComponent>()->children.push_back(currentObj);
-			UpdateWorldTransform(*GetGameObject());
+			UpdateWorldTransform();
 		}
 	}
 }
 
-void TransformComponent::UpdateWorldTransform(GameObject& obj)
+void TransformComponent::UpdateWorldTransform()
 {
 	if (parent) {
 		if (auto parentTransform = parent->GetComponent<TransformComponent>()) {
@@ -56,7 +56,7 @@ void TransformComponent::UpdateWorldTransform(GameObject& obj)
 	}
 }
 
-void TransformComponent::Update(GameObject& obj)
+void TransformComponent::Update()
 {
-	UpdateWorldTransform(obj);
+	UpdateWorldTransform();
 }

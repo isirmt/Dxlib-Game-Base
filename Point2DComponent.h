@@ -9,6 +9,6 @@ public:
 
 	Point2DComponent(unsigned int _color) : color(_color) {};
 
-	void Render(GameObject& obj) override;
+	void Render() override;
 };
 

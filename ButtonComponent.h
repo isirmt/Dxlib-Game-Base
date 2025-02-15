@@ -34,6 +34,6 @@ public:
     void AddOnClickListener(Callback callback);
     void AddOnClickEndListener(Callback callback);
 
-    void Update(GameObject& obj) override;
+    void Update() override;
 };
 

@@ -12,6 +12,6 @@ public:
 
 	DragComponent() = default;
 
-	void Update(GameObject& obj) override;
+	void Update() override;
 };
 

@@ -3,9 +3,9 @@
 #include "DxLib.h"
 #include "GameObject.h"
 
-void Point2DComponent::Render(GameObject& obj)
+void Point2DComponent::Render()
 {
-	auto transform = obj.GetComponent<TransformComponent>();
+	auto transform = GetGameObject()->GetComponent<TransformComponent>();
 	if (!transform) return;
 
 	float x = transform->worldX;

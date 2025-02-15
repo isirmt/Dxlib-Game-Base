@@ -9,6 +9,6 @@ public:
 
     AutoDestroyComponent(int _milliseconds) : milliseconds(_milliseconds), remain(_milliseconds) {}
 
-    void Update(GameObject& obj) override;
+    void Update() override;
 };
 

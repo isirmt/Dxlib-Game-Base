@@ -3,9 +3,9 @@
 #include "GameObject.h"
 #include "TransformComponent.h"
 
-void Rect2DComponent::Render(GameObject& obj)
+void Rect2DComponent::Render()
 {
-	auto transform = obj.GetComponent<TransformComponent>();
+	auto transform = GetGameObject()->GetComponent<TransformComponent>();
 	if (!transform) return;
 
 	float x = transform->worldX;

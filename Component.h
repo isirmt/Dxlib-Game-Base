@@ -9,8 +9,8 @@ protected:
 
 public:
 	virtual ~Component() = default;
-	virtual void Update(GameObject& obj) {};
-	virtual void Render(GameObject& obj) {};
+	virtual void Update() {};
+	virtual void Render() {};
 
 	void SetGameObject(std::shared_ptr<GameObject> obj) {
 		gameObject = obj;

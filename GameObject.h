@@ -63,14 +63,14 @@ public:
 	void Update()
 	{
 		for (auto& [type, component] : components_) {
-			component->Update(*this);
+			component->Update();
 		}
 	}
 
 	void Render()
 	{
 		for (auto& [type, component] : components_) {
-			component->Render(*this);
+			component->Render();
 		}
 	}
 };
