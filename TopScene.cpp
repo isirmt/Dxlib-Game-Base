@@ -13,15 +13,17 @@
 void TopScene::Start()
 {
 	RegisterRenderTarget(0, 1280, 720);
-	RegisterRenderTarget(1, 1280, 720);
+	RegisterRenderTarget(1, 1500, 500);
+	RegisterRenderTarget(2, 1280, 720);
 
 	// カメラ
 
 	GameObjectPtr camera1 = std::make_shared<GameObject>("camera1");
 	camera1->SetLayer(0);
+	camera1->AddComponent<TransformComponent>(0.f, 0.f);
 	camera1->AddComponent<Camera2DComponent>(
 		0, 0, 1280 / 2, 720,
-		0, 0, 1280 / 2 / 2, 720 / 2,
+		1280 / 2 / 2, 720 / 2,
 		camera1->GetLayer()
 	);
 	camera1->AddTag("Camera");
@@ -30,9 +32,10 @@ void TopScene::Start()
 
 	GameObjectPtr camera2 = std::make_shared<GameObject>("camera2");
 	camera2->SetLayer(0);
+	camera2->AddComponent<TransformComponent>(1280.f / 2 + 50.f, 0.f);
 	camera2->AddComponent<Camera2DComponent>(
 		1280 / 2, 0, 1280 / 2, 720,
-		1280 / 2 + 50, 0, 1280 / 2, 720,
+		1280 / 2, 720,
 		camera2->GetLayer()
 	);
 	camera2->AddTag("Camera");
@@ -41,14 +44,27 @@ void TopScene::Start()
 
 	GameObjectPtr camera3 = std::make_shared<GameObject>("camera3");
 	camera3->SetLayer(1);
+	auto camera3TComp = camera3->AddComponent<TransformComponent>(0.f, 40.f);
 	camera3->AddComponent<Camera2DComponent>(
-		0, 0, 1280, 720,
-		50, 400, 750, 250,
+		0, 0, 1500, 500,
+		750, 250,
 		camera3->GetLayer()
 	);
 	camera3->AddTag("Camera");
 	cameraSelector->cameras.push_back(camera3);
 	AddObject(camera3);
+
+	GameObjectPtr camera4 = std::make_shared<GameObject>("camera4");
+	camera4->SetLayer(2);
+	camera4->AddComponent<TransformComponent>(0.f, 0.f);
+	camera4->AddComponent<Camera2DComponent>(
+		0, 0, 1280, 720,
+		1280, 720,
+		camera4->GetLayer()
+	);
+	camera4->AddTag("Camera");
+	cameraSelector->cameras.push_back(camera4);
+	AddObject(camera4);
 
 	// 背景設定
 	GameObjectPtr backRectLeft = std::make_shared<GameObject>("backRectLeft");
@@ -68,7 +84,7 @@ void TopScene::Start()
 	GameObjectPtr back2RectRight = std::make_shared<GameObject>("back2RectRight");
 	back2RectRight->SetLayer(1);
 	back2RectRight->AddComponent<TransformComponent>(0.f, 0.f);
-	back2RectRight->AddComponent<Rect2DComponent>(1280.f, 720.f, GetColor(0, 0, 20));
+	back2RectRight->AddComponent<Rect2DComponent>(1500.f, 500.f, GetColor(0, 0, 20));
 	back2RectRight->AddTag("Object");
 	AddObject(back2RectRight);
 
@@ -99,6 +115,16 @@ void TopScene::Start()
 	wButton1->AddTag("Object");
 	AddObject(wButton1);
 
+	GameObjectPtr camera3Frame = std::make_shared<GameObject>("camera3Frame");
+	camera3Frame->SetLayer(2);
+	camera3Frame->AddComponent<TransformComponent>(50.f, 400.f);
+	camera3Frame->AddComponent<Rect2DComponent>(750.f, 40.f, GetColor(0, 255, 255));
+	camera3Frame->AddComponent<DragComponent>();
+	camera3Frame->AddTag("Object");
+	AddObject(camera3Frame);
+
+	camera3TComp->SetParent(camera3Frame);
+
 	// タグ「UI」を指定
 	GameObjectPtr canvas = std::make_shared<GameObject>("canvas");
 	canvas->AddComponent<TransformComponent>(0.f, 0.f);
@@ -111,7 +137,7 @@ void TopScene::Start()
 	canvasButtonTComp->SetParent(canvas);
 	canvasButton->AddComponent<ButtonComponent>();
 	canvasButton->AddTag("UI");
-	AddObject(canvasButton);
+	AddObject(canvasButton);	
 }
 
 void TopScene::OnButtonClickedMember()
