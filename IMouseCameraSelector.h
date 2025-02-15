@@ -10,5 +10,6 @@ public:
 	std::vector<std::shared_ptr<GameObject>> cameras;
 
 	std::shared_ptr<IMouseCoordinateConverter> GetCurrentMouseConverter();
+	std::shared_ptr<IMouseCoordinateConverter> GetCurrentMouseConverter(int targetLayer);
 };
 

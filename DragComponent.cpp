@@ -14,11 +14,13 @@ void DragComponent::Update(GameObject& obj)
 
     std::shared_ptr<IMouseCoordinateConverter> converter;
     if (cameraSelector) {
-        converter = cameraSelector->GetCurrentMouseConverter();
+        converter = cameraSelector->GetCurrentMouseConverter(obj.GetLayer());
     }
     else {
         converter = std::make_shared<UIMouseCoordinateConverter>();
     }
+
+    if (!converter) return;
 
     int mouseScreenX, mouseScreenY;
     GetMousePoint(&mouseScreenX, &mouseScreenY);

@@ -21,7 +21,7 @@ void TopScene::Start()
 	camera1->SetLayer(0);
 	camera1->AddComponent<Camera2DComponent>(
 		0, 0, 1280 / 2, 720,
-		0, 0, 1280 / 2, 720,
+		0, 0, 1280 / 2 / 2, 720 / 2,
 		camera1->GetLayer()
 	);
 	camera1->AddTag("Camera");
@@ -43,7 +43,7 @@ void TopScene::Start()
 	camera3->SetLayer(1);
 	camera3->AddComponent<Camera2DComponent>(
 		0, 0, 1280, 720,
-		0, 0, 1280, 720,
+		50, 400, 750, 250,
 		camera3->GetLayer()
 	);
 	camera3->AddTag("Camera");
@@ -64,6 +64,13 @@ void TopScene::Start()
 	backRectRight->AddComponent<Rect2DComponent>(1280.f / 2, 720.f, GetColor(0, 20, 0));
 	backRectRight->AddTag("Object");
 	AddObject(backRectRight);
+
+	GameObjectPtr back2RectRight = std::make_shared<GameObject>("back2RectRight");
+	back2RectRight->SetLayer(1);
+	back2RectRight->AddComponent<TransformComponent>(0.f, 0.f);
+	back2RectRight->AddComponent<Rect2DComponent>(1280.f, 720.f, GetColor(0, 0, 20));
+	back2RectRight->AddTag("Object");
+	AddObject(back2RectRight);
 
 	GameObjectPtr point2d = std::make_shared<GameObject>("point2d");
 	point2d->SetLayer(0);
@@ -102,6 +109,7 @@ void TopScene::Start()
 	auto canvasButtonTComp = canvasButton->AddComponent<TransformComponent>(100.f, 100.f); // ローカル座標
 	canvasButton->AddComponent<Rect2DComponent>(150.f, 50.f, GetColor(0, 255, 0));
 	canvasButtonTComp->SetParent(canvas);
+	canvasButton->AddComponent<ButtonComponent>();
 	canvasButton->AddTag("UI");
 	AddObject(canvasButton);
 }
@@ -113,10 +121,11 @@ void TopScene::OnButtonClickedMember()
 	int r = GetRand(256);
 	int g = GetRand(256);
 	int b = GetRand(256);
+	int l = GetRand(1);
 
 	// ドラッグ操作可能
 	GameObjectPtr randomRectObj = std::make_shared<GameObject>("randomRect");
-	randomRectObj->SetLayer(1);
+	randomRectObj->SetLayer(l);
 	randomRectObj->AddComponent<TransformComponent>(static_cast<float>(randX), static_cast<float>(randY));
 	randomRectObj->AddComponent<Rect2DComponent>(50.f, 50.f, GetColor(r, g, b));
 	randomRectObj->AddComponent<AutoDestroyComponent>(60 * 3);
