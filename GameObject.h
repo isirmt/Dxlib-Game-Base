@@ -12,14 +12,15 @@ class GameObject : public std::enable_shared_from_this<GameObject>
 {
 	std::unordered_map<std::type_index, ComponentPtr> components_;
 	std::vector<std::string> tags;
-	bool shouldDestroy;
+	bool shouldDestroy = false;
 	int layer = 0;
+	int orderInLayer = 0;
 
 public:
 	std::string name;
 
 	GameObject(std::string _name)
-		: name(_name), shouldDestroy(false) {
+		: name(_name) {
 	}
 
 	template <typename T, typename... Args>
@@ -48,6 +49,9 @@ public:
 	bool HasTag(std::string tag) {
 		return std::find(tags.begin(), tags.end(), tag) != tags.end();
 	}
+
+	void SetOrderInLayer(int order) { orderInLayer = order; }
+	int GetOrderInLayer() const { return orderInLayer; }
 
 	void SetLayer(int _layer) { layer = _layer; }
 	int GetLayer() const { return layer; }

@@ -52,56 +52,75 @@ void Scene::Update()
 
 void Scene::Render()
 {
-    // レイヤー単位で非UIオブジェクトを描画
-    for (auto& [layer, renderTarget] : renderTargets)
-    {
-        SetDrawScreen(renderTarget->handle);
-        ClearDrawScreen();
+	// レイヤー単位で非UIオブジェクトを描画
+	for (auto& [layer, renderTarget] : renderTargets) {
+		SetDrawScreen(renderTarget->handle);
+		ClearDrawScreen();
 
-        for (auto& obj : gameObjects)
-        {
-            if (!obj->HasTag("UI") && obj->GetLayer() == layer)
-            {
-                obj->Render();
-            }
-        }
-    }
+		std::vector<GameObjectPtr> layerObjects;
+		for (auto& obj : gameObjects) {
+			if (!obj->HasTag("UI") && obj->GetLayer() == layer) {
+				layerObjects.push_back(obj);
+			}
+		}
 
-    // DX_SCREEN_BACKにレンダーターゲットをカメラ越しに描画
-    SetDrawScreen(DX_SCREEN_BACK);
-    ClearDrawScreen();
+		// orderInLayerでソート(大きいほど上に)
+		std::sort(
+			layerObjects.begin(), layerObjects.end(),
+			[](const GameObjectPtr& a, const GameObjectPtr& b) {
+				return a->GetOrderInLayer() < b->GetOrderInLayer();
+			}
+		);
 
-    // カメラオブジェクトの選択
-    std::list<GameObjectPtr> cameras;
-    std::copy_if(
-        gameObjects.begin(), gameObjects.end(), std::back_inserter(cameras),
-        [](const GameObjectPtr& obj) {
-            return obj->HasTag("Camera");
-        }
-    );
+		for (auto& obj : layerObjects) {
+			obj->Render();
+		}
+	}
 
-    for (auto& camera : cameras) {
-        auto camComp = camera->GetComponent<Camera2DComponent>();
-        if (camComp) {
-            int layer = camComp->renderLayer;
-            if (renderTargets.find(layer) != renderTargets.end()) {
-                camComp->Render(renderTargets[layer]->handle);
-            }
-        }
-    }
+	// DX_SCREEN_BACKにレンダーターゲットをカメラ越しに描画
+	SetDrawScreen(DX_SCREEN_BACK);
 
-    // UIは直接描画
-    std::list<GameObjectPtr> uiObjects;
-    std::copy_if(
-        gameObjects.begin(), gameObjects.end(), std::back_inserter(uiObjects),
-        [](const GameObjectPtr& obj) {
-            return obj->HasTag("UI");
-        }
-    );
+	if (!isAdditive) {
+		ClearDrawScreen();
+	}
 
-    for (auto& ui : uiObjects) {
-        ui->Render();
-    }
+	std::list<GameObjectPtr> cameras;
+	std::copy_if(
+		gameObjects.begin(), gameObjects.end(), std::back_inserter(cameras),
+		[](const GameObjectPtr& obj) {
+			return obj->HasTag("Camera");
+		}
+	);
+
+	for (auto& camera : cameras) {
+		auto camComp = camera->GetComponent<Camera2DComponent>();
+		if (camComp) {
+			int layer = camComp->renderLayer;
+			if (renderTargets.find(layer) != renderTargets.end()) {
+				camComp->Render(renderTargets[layer]->handle);
+			}
+		}
+	}
+
+	// UIの描画
+
+	std::vector<GameObjectPtr> uiObjects;
+	for (auto& obj : gameObjects) {
+		if (obj->HasTag("UI")) {
+			uiObjects.push_back(obj);
+		}
+	}
+
+	std::sort(
+		uiObjects.begin(), uiObjects.end(),
+		[](const GameObjectPtr& a, const GameObjectPtr& b) {
+			return a->GetOrderInLayer() < b->GetOrderInLayer();
+		}
+	);
+
+	for (auto& ui : uiObjects) {
+		ui->Render();
+	}
 }
 
 void Scene::Reset()
