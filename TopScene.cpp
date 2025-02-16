@@ -154,7 +154,7 @@ void TopScene::OnButtonClickedMember()
 	randomRectObj->SetLayer(l);
 	randomRectObj->AddComponent<TransformComponent>(static_cast<float>(randX), static_cast<float>(randY));
 	randomRectObj->AddComponent<Rect2DComponent>(50.f, 50.f, GetColor(r, g, b));
-	randomRectObj->AddComponent<AutoDestroyComponent>(60 * 3);
+	randomRectObj->AddComponent<AutoDestroyComponent>(3.f);
 	randomRectObj->AddTag("Object");
 	auto dragComp = randomRectObj->AddComponent<DragComponent>();
 	dragComp->cameraSelector = cameraSelector;
@@ -164,7 +164,7 @@ void TopScene::OnButtonClickedMember()
 	attachedRectObj->SetLayer(randomRectObj->GetLayer());
 	attachedRectObj->AddComponent<TransformComponent>(45.f, 45.f)->SetParent(randomRectObj);
 	attachedRectObj->AddComponent<Rect2DComponent>(7.f, 7.f, GetColor(200, 200, 40));
-	attachedRectObj->AddComponent<AutoDestroyComponent>(60 * 3);
+	attachedRectObj->AddComponent<AutoDestroyComponent>(3.f);
 	attachedRectObj->AddTag("Object");
 	this->AddObject(attachedRectObj);
 

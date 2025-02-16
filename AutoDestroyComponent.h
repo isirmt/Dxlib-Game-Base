@@ -4,10 +4,10 @@ class AutoDestroyComponent :
     public Component
 {
 public:
-    int milliseconds;
-    int remain;
+    float seconds;
+    float remain;
 
-    AutoDestroyComponent(int _milliseconds) : milliseconds(_milliseconds), remain(_milliseconds) {}
+    AutoDestroyComponent(float _seconds) : seconds(_seconds), remain(_seconds) {}
 
     void Update() override;
 };
