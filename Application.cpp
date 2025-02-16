@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "DxLib.h"
 #include "TopScene.h"
+#include "Time.h"
 
 Application::Application() : running(true), requestedReseting(false)
 {
@@ -47,6 +48,8 @@ void Application::UnloadScene(std::shared_ptr<Scene> scene)
 
 void Application::Update()
 {
+    Time& time = Time::GetInstance();
+    time.Update();
     for (auto& scene : scenes_)
     {
         scene->Update();

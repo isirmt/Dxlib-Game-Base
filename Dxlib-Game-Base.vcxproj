@@ -159,6 +159,7 @@
     <ClCompile Include="Rect2DComponent.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="TopScene.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="UIMouseCoordinateConverter.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="Rect2DComponent.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="TopScene.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="UIMouseCoordinateConverter.h" />
