@@ -4,6 +4,7 @@
 
 class DragComponent : public Component {
 public:
+	bool wasLeftMouseDown = false;
 	bool dragging = false;
 	int offsetX = 0;
 	int offsetY = 0;
