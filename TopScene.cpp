@@ -9,9 +9,13 @@
 #include "DxLib.h"
 #include "CameraMouseCoordinateConverter.h"
 #include "AutoDestroyComponent.h"
+#include "TextComponent.h"
+#include "ResourceManager.h"
 
 void TopScene::Start()
 {
+	ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1);
+
 	RegisterRenderTarget(0, 1280, 720);
 	RegisterRenderTarget(1, 1500, 500);
 	RegisterRenderTarget(2, 500, 500);
@@ -97,6 +101,23 @@ void TopScene::Start()
 	back3RectRight->AddTag("Object");
 	AddObject(back3RectRight);
 
+	GameObjectPtr text1 = std::make_shared<GameObject>("text1");
+	text1->SetLayer(0);
+	text1->AddComponent<TransformComponent>(1280.f / 2, 30.f);
+	text1->AddComponent<Rect2DComponent>(200.f, 150.f, GetColor(20, 20, 20));
+	text1->AddComponent<TextComponent>(
+		"Hello World! ハローワールド！ おはよう！",
+		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
+		GetColor(255, 255, 255),
+		80,
+		30
+	);
+	auto text1DComp = text1->AddComponent<DragComponent>();
+	text1DComp->cameraSelector = cameraSelector;
+	text1->AddTag("Object");
+	
+	AddObject(text1);
+
 	GameObjectPtr point2d = std::make_shared<GameObject>("point2d");
 	point2d->SetLayer(0);
 	point2d->AddComponent<TransformComponent>(320.f, 240.f);
@@ -116,17 +137,29 @@ void TopScene::Start()
 	wButton1->SetLayer(0);
 	wButton1->AddComponent<TransformComponent>(800.f, 600.f);
 	wButton1->AddComponent<Rect2DComponent>(200.f, 40.f, GetColor(0, 0, 255));
+	wButton1->AddComponent<TextComponent>(
+		"ボタン1",
+		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
+		GetColor(255, 255, 255),
+		0
+	);
 	auto wButton1BComp = wButton1->AddComponent<ButtonComponent>();
 	wButton1BComp->cameraSelector = cameraSelector;
 	wButton1BComp->AddOnClickListener(std::bind(&TopScene::OnButtonClickedMember, this));
-	auto dragComp = wButton1->AddComponent<DragComponent>();
-	dragComp->cameraSelector = cameraSelector;
+	auto wButton1DComp = wButton1->AddComponent<DragComponent>();
+	wButton1DComp->cameraSelector = cameraSelector;
 	wButton1->AddTag("Object");
 	AddObject(wButton1);
 
 	GameObjectPtr camera3Frame = std::make_shared<GameObject>("camera3Frame");
 	camera3Frame->AddComponent<TransformComponent>(50.f, 400.f);
 	camera3Frame->AddComponent<Rect2DComponent>(750.f, 40.f, GetColor(0, 255, 255));
+	camera3Frame->AddComponent<TextComponent>(
+		"レイヤー1のカメラ(ドラッグ可)",
+		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
+		GetColor(50, 50, 200),
+		0
+	);
 	camera3Frame->AddComponent<DragComponent>();
 	camera3Frame->AddTag("UI");
 	camera3Frame->SetOrderInLayer(10); // UI扱いにするが，他UIより下にする
@@ -137,6 +170,12 @@ void TopScene::Start()
 	GameObjectPtr camera4Frame = std::make_shared<GameObject>("camera4Frame");
 	camera4Frame->AddComponent<TransformComponent>(400.f, 200.f);
 	camera4Frame->AddComponent<Rect2DComponent>(500.f, 40.f, GetColor(255, 255, 255));
+	camera4Frame->AddComponent<TextComponent>(
+		"レイヤー2のカメラ(ドラッグ可)",
+		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
+		GetColor(50, 50, 200),
+		0
+	);
 	camera4Frame->AddComponent<DragComponent>();
 	camera4Frame->AddTag("UI");
 	camera4Frame->SetOrderInLayer(15); // UI扱いにするが，他UIより下にする

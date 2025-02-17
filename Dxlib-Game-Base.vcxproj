@@ -158,7 +158,9 @@
     <ClCompile Include="Point2DComponent.cpp" />
     <ClCompile Include="Rect2DComponent.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="TopScene.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
@@ -178,7 +180,9 @@
     <ClInclude Include="Point2DComponent.h" />
     <ClInclude Include="Rect2DComponent.h" />
     <ClInclude Include="RenderTarget.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="TextComponent.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="TopScene.h" />
     <ClInclude Include="TransformComponent.h" />
