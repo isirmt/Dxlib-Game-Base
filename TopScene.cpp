@@ -183,7 +183,6 @@ void TopScene::OnButtonClickedMember()
 	attachedRectObj->SetLayer(randomRectObj->GetLayer());
 	attachedRectObj->AddComponent<TransformComponent>(45.f, 45.f)->SetParent(randomRectObj);
 	attachedRectObj->AddComponent<Rect2DComponent>(7.f, 7.f, GetColor(200, 200, 40));
-	attachedRectObj->AddComponent<AutoDestroyComponent>(3.f);
 	attachedRectObj->AddTag("Object");
 	this->AddObject(attachedRectObj);
 

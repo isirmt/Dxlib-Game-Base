@@ -15,6 +15,8 @@ class GameObject : public std::enable_shared_from_this<GameObject>
 	bool shouldDestroy = false;
 	int layer = 0;
 	int orderInLayer = 0;
+	bool active = true;
+	bool visible = true;
 
 public:
 	std::string name;
@@ -56,16 +58,23 @@ public:
 	void SetLayer(int _layer) { layer = _layer; }
 	int GetLayer() const { return layer; }
 
-	void Destroy() {
-		shouldDestroy = true;
-	}
+	void Destroy();
 
 	bool ShouldBeDestroyed() const {
 		return shouldDestroy;
 	}
 
+	void SetActive(bool flag);
+
+	bool IsActive() const { return active; }
+
+	void SetVisible(bool flag);
+
+	bool IsVisible() const { return visible; }
+
 	void Update()
 	{
+		if (!active) return;
 		for (auto& [type, component] : components_) {
 			component->Update();
 		}
@@ -73,6 +82,7 @@ public:
 
 	void Render()
 	{
+		if (!active || !visible) return;
 		for (auto& [type, component] : components_) {
 			component->Render();
 		}
