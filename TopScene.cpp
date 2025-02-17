@@ -14,7 +14,7 @@ void TopScene::Start()
 {
 	RegisterRenderTarget(0, 1280, 720);
 	RegisterRenderTarget(1, 1500, 500);
-	RegisterRenderTarget(2, 1280, 720);
+	RegisterRenderTarget(2, 500, 500);
 
 	// カメラ
 
@@ -56,10 +56,10 @@ void TopScene::Start()
 
 	GameObjectPtr camera4 = std::make_shared<GameObject>("camera4");
 	camera4->SetLayer(2);
-	camera4->AddComponent<TransformComponent>(0.f, 0.f);
+	auto camera4TComp = camera4->AddComponent<TransformComponent>(0.f, 40.f);
 	camera4->AddComponent<Camera2DComponent>(
-		0, 0, 1280, 720,
-		1280, 720,
+		0, 0, 500, 500,
+		500, 500,
 		camera4->GetLayer()
 	);
 	camera4->AddTag("Camera");
@@ -87,6 +87,13 @@ void TopScene::Start()
 	back2RectRight->AddComponent<Rect2DComponent>(1500.f, 500.f, GetColor(0, 0, 20));
 	back2RectRight->AddTag("Object");
 	AddObject(back2RectRight);
+
+	GameObjectPtr back3RectRight = std::make_shared<GameObject>("back2RectRight");
+	back3RectRight->SetLayer(2);
+	back3RectRight->AddComponent<TransformComponent>(0.f, 0.f);
+	back3RectRight->AddComponent<Rect2DComponent>(500.f, 500.f, GetColor(20, 20, 20));
+	back3RectRight->AddTag("Object");
+	AddObject(back3RectRight);
 
 	GameObjectPtr point2d = std::make_shared<GameObject>("point2d");
 	point2d->SetLayer(0);
@@ -116,14 +123,24 @@ void TopScene::Start()
 	AddObject(wButton1);
 
 	GameObjectPtr camera3Frame = std::make_shared<GameObject>("camera3Frame");
-	camera3Frame->SetLayer(2);
 	camera3Frame->AddComponent<TransformComponent>(50.f, 400.f);
 	camera3Frame->AddComponent<Rect2DComponent>(750.f, 40.f, GetColor(0, 255, 255));
 	camera3Frame->AddComponent<DragComponent>();
-	camera3Frame->AddTag("Object");
+	camera3Frame->AddTag("UI");
+	camera3Frame->SetOrderInLayer(-100); // UI扱いにするが，他UIより下にする
 	AddObject(camera3Frame);
 
 	camera3TComp->SetParent(camera3Frame);
+
+	GameObjectPtr camera4Frame = std::make_shared<GameObject>("camera4Frame");
+	camera4Frame->AddComponent<TransformComponent>(400.f, 200.f);
+	camera4Frame->AddComponent<Rect2DComponent>(500.f, 40.f, GetColor(255, 255, 255));
+	camera4Frame->AddComponent<DragComponent>();
+	camera4Frame->AddTag("UI");
+	camera4Frame->SetOrderInLayer(-99); // UI扱いにするが，他UIより下にする
+	AddObject(camera4Frame);
+
+	camera4TComp->SetParent(camera4Frame);
 
 	// タグ「UI」を指定
 	GameObjectPtr canvas = std::make_shared<GameObject>("canvas");
