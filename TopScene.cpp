@@ -51,6 +51,7 @@ void TopScene::Start()
 		camera3->GetLayer()
 	);
 	camera3->AddTag("Camera");
+	camera3->SetOrderInLayer(15);
 	cameraSelector->cameras.push_back(camera3);
 	AddObject(camera3);
 
@@ -63,6 +64,7 @@ void TopScene::Start()
 		camera4->GetLayer()
 	);
 	camera4->AddTag("Camera");
+	camera4->SetOrderInLayer(20);
 	cameraSelector->cameras.push_back(camera4);
 	AddObject(camera4);
 
@@ -127,7 +129,7 @@ void TopScene::Start()
 	camera3Frame->AddComponent<Rect2DComponent>(750.f, 40.f, GetColor(0, 255, 255));
 	camera3Frame->AddComponent<DragComponent>();
 	camera3Frame->AddTag("UI");
-	camera3Frame->SetOrderInLayer(-100); // UI扱いにするが，他UIより下にする
+	camera3Frame->SetOrderInLayer(10); // UI扱いにするが，他UIより下にする
 	AddObject(camera3Frame);
 
 	camera3TComp->SetParent(camera3Frame);
@@ -137,7 +139,7 @@ void TopScene::Start()
 	camera4Frame->AddComponent<Rect2DComponent>(500.f, 40.f, GetColor(255, 255, 255));
 	camera4Frame->AddComponent<DragComponent>();
 	camera4Frame->AddTag("UI");
-	camera4Frame->SetOrderInLayer(-99); // UI扱いにするが，他UIより下にする
+	camera4Frame->SetOrderInLayer(15); // UI扱いにするが，他UIより下にする
 	AddObject(camera4Frame);
 
 	camera4TComp->SetParent(camera4Frame);
@@ -164,7 +166,7 @@ void TopScene::OnButtonClickedMember()
 	int r = GetRand(256);
 	int g = GetRand(256);
 	int b = GetRand(256);
-	int l = GetRand(1);
+	int l = GetRand(2);
 
 	// ドラッグ操作可能
 	GameObjectPtr randomRectObj = std::make_shared<GameObject>("randomRect");

@@ -3,6 +3,7 @@
 #include "Camera2DComponent.h"
 #include <algorithm>
 #include <iterator>
+#include <functional>
 
 Scene::~Scene()
 {
@@ -84,6 +85,16 @@ void Scene::Render()
 		ClearDrawScreen();
 	}
 
+	// レンダー構造体(順序の保持)
+
+	struct RenderCommand {
+		int order;
+		std::function<void()> command;
+	};
+	std::vector<RenderCommand> renderQueue;
+
+	// カメラによる描画
+
 	std::list<GameObjectPtr> cameras;
 	std::copy_if(
 		gameObjects.begin(), gameObjects.end(), std::back_inserter(cameras),
@@ -97,7 +108,15 @@ void Scene::Render()
 		if (camComp) {
 			int layer = camComp->renderLayer;
 			if (renderTargets.find(layer) != renderTargets.end()) {
-				camComp->Render(renderTargets[layer]->handle);
+				int order = camera->GetOrderInLayer();
+				int rtHandle = renderTargets[layer]->handle;
+				renderQueue.push_back({
+					order,
+					[camComp, rtHandle]() {
+						camComp->Render(rtHandle);
+					}
+					}
+				);
 			}
 		}
 	}
@@ -119,7 +138,26 @@ void Scene::Render()
 	);
 
 	for (auto& ui : uiObjects) {
-		ui->Render();
+		int order = ui->GetOrderInLayer();
+		renderQueue.push_back({
+			order,
+			[ui]() {
+				ui->Render();
+			}
+			}
+		);
+	}
+
+	// キューをソート
+	std::sort(
+		renderQueue.begin(), renderQueue.end(),
+		[](const RenderCommand& a, const RenderCommand& b) {
+			return a.order < b.order;
+		}
+	);
+
+	for (auto& cmd : renderQueue) {
+		cmd.command();
 	}
 }
 
