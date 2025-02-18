@@ -19,13 +19,6 @@ Application::Application() : running(true), requestedReseting(false)
     ChangeScene(std::make_shared<TopScene>());
 }
 
-Application& Application::GetInstance()
-{
-    static Application instance;
-
-    return instance;
-}
-
 void Application::ChangeScene(std::shared_ptr<Scene> newScene)
 {
     scenes_.clear();

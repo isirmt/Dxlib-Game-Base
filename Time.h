@@ -2,10 +2,11 @@
 #include <chrono>
 #include <thread>
 #include "DxLib.h"
+#include "Singleton.h"
 
-class Time
+class Time : public Singleton<Time>
 {
-private:
+	friend class Singleton<Time>;
 	static float deltaTime;
 	static float targetFPS;
 	static bool unlimitedFPS;
@@ -15,15 +16,6 @@ protected:
 	Time() = default;
 
 public:
-
-	Time(const Time&) = delete;
-	Time& operator=(const Time&) = delete;
-
-	static Time& GetInstance() {
-		static Time instance;
-		return instance;
-	}
-
 	float GetDeltaTime() const {
 		return deltaTime;
 	}

@@ -160,6 +160,7 @@
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="TopScene.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="TextComponent.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="TopScene.h" />
