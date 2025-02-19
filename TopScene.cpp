@@ -109,7 +109,7 @@ void TopScene::Start()
 		"Hello World! ハローワールド！ おはよう！",
 		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
 		GetColor(255, 255, 255),
-		80,
+		200,
 		30
 	);
 	auto text1DComp = text1->AddComponent<DragComponent>();

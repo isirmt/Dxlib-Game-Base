@@ -1,8 +1,15 @@
 #pragma once
 #include "Component.h"
 #include <string>
+#include <vector>
 
 class TextComponent : public Component {
+private:
+	std::vector<std::string> cachedWrappedLines;
+	std::string cachedText;
+	int cachedWrapWidth = 0;
+	bool needsWrapUpdate = true;
+
 public:
 	std::string text;
 	int fontHandle;
@@ -14,5 +21,10 @@ public:
 		: text(_text), fontHandle(_fontHandle), color(_color), wrapWidth(_wrapWidth), lineHeight(_lineHeight) {
 	}
 
-	virtual void Render() override;
+	size_t GetWrappedLines() const {
+		return wrapWidth > 0 ? cachedWrappedLines.size() : static_cast<size_t>(1);
+	}
+
+	void Update() override;
+	void Render() override;
 };
