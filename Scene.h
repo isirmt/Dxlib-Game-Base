@@ -44,6 +44,8 @@ public:
 		cameraSelector = _cameraSelector;
 	}
 
+	const std::list<GameObjectPtr>& GetGameObjects() const { return gameObjects; }
+
 private:
 	void ProcessPending();
 

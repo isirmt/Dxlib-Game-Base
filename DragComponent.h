@@ -9,6 +9,7 @@ public:
 	bool dragging = false;
 	int offsetX = 0;
 	int offsetY = 0;
+	bool ignoreLayerCheck = false;
 
 	std::shared_ptr<IMouseCameraSelector> cameraSelector;
 	std::shared_ptr<IMouseProvider> mouseProvider;

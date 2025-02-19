@@ -5,6 +5,7 @@
 #include "DxLib.h"
 #include "IMouseCoordinateConverter.h"
 #include "UIMouseCoordinateConverter.h"
+#include "Application.h"
 
 void DragComponent::Update()
 {
@@ -49,6 +50,14 @@ void DragComponent::Update()
     if (!dragging) {
         // クリック開始時にドラッグ開始
         if (!wasLeftMouseDown && currentLeftDown && isOver) {
+            if (!ignoreLayerCheck) {
+                auto topObj = Application::GetInstance().GetTopGameObjectAtPoint();
+                if (!topObj || topObj.get() != GetGameObject().get()) {
+                    wasLeftMouseDown = currentLeftDown;
+                    return;
+                }
+            }
+
             dragging = true;
             offsetX = convertedX - x;
             offsetY = convertedY - y;

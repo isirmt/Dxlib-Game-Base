@@ -33,5 +33,7 @@ public:
 		return mouseProvider;
 	}
 
+	std::shared_ptr<GameObject> GetTopGameObjectAtPoint();
+
 	void Run();
 };

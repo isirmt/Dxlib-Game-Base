@@ -37,7 +37,7 @@ std::shared_ptr<IMouseCoordinateConverter> IMouseCameraSelector::GetCurrentMouse
     }
 
     if (selectedCamera) {
-        printfDx("Target Camera: RenderLayer: %d\n", selectedCamera->renderLayer);
+        printfDx("[GLOBAL] Target Camera: RenderLayer: %d\n", selectedCamera->renderLayer);
         return std::make_shared<CameraMouseCoordinateConverter>(selectedCamera);
     }
     else {
@@ -48,7 +48,12 @@ std::shared_ptr<IMouseCoordinateConverter> IMouseCameraSelector::GetCurrentMouse
 std::shared_ptr<IMouseCoordinateConverter> IMouseCameraSelector::GetCurrentMouseConverter(int targetLayer)
 {
     int mouseX, mouseY;
-    GetMousePoint(&mouseX, &mouseY);
+    if (auto mouseProv = Application::GetInstance().GetMouseProvider()) {
+        mouseProv->GetMousePosition(mouseX, mouseY);
+    }
+    else {
+        GetMousePoint(&mouseX, &mouseY);
+    }
     printfDx("Mouse: %d %d\n", mouseX, mouseY);
 
     std::shared_ptr<Camera2DComponent> selectedCamera = nullptr;

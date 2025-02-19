@@ -26,6 +26,7 @@ public:
 
     bool isHovering = false;
     bool isClicked = false;
+    bool ignoreLayerCheck = false;
     
     ButtonComponent() {}
 

@@ -29,7 +29,7 @@ void TopScene::Start()
 	camera1->AddComponent<Camera2DComponent>(
 		0, 0, 1280 / 2, 720,
 		1280 / 2 / 2, 720 / 2,
-		camera1->GetLayer()
+		0
 	);
 	camera1->AddTag("Camera");
 	cameraSelector->cameras.push_back(camera1);
@@ -41,7 +41,7 @@ void TopScene::Start()
 	camera2->AddComponent<Camera2DComponent>(
 		1280 / 2, 0, 1280 / 2, 720,
 		1280 / 2, 720,
-		camera2->GetLayer()
+		0
 	);
 	camera2->AddTag("Camera");
 	cameraSelector->cameras.push_back(camera2);
@@ -53,7 +53,7 @@ void TopScene::Start()
 	camera3->AddComponent<Camera2DComponent>(
 		0, 0, 1500, 500,
 		750, 250,
-		camera3->GetLayer()
+		1
 	);
 	camera3->AddTag("Camera");
 	camera3->SetOrderInLayer(15);
@@ -66,7 +66,7 @@ void TopScene::Start()
 	camera4->AddComponent<Camera2DComponent>(
 		0, 0, 500, 500,
 		500, 500,
-		camera4->GetLayer()
+		2
 	);
 	camera4->AddTag("Camera");
 	camera4->SetOrderInLayer(20);
@@ -91,23 +91,26 @@ void TopScene::Start()
 	GameObjectPtr back2RectRight = std::make_shared<GameObject>("back2RectRight");
 	back2RectRight->SetLayer(1);
 	back2RectRight->AddComponent<TransformComponent>(0.f, 0.f);
+	//back2RectRight->AddComponent<ColliderComponent>(1500.f, 500.f);
 	back2RectRight->AddComponent<Rect2DComponent>(1500.f, 500.f, GetColor(0, 0, 20));
 	back2RectRight->AddTag("Object");
 	AddObject(back2RectRight);
 
-	GameObjectPtr back3RectRight = std::make_shared<GameObject>("back2RectRight");
+	GameObjectPtr back3RectRight = std::make_shared<GameObject>("back3RectRight");
 	back3RectRight->SetLayer(2);
 	back3RectRight->AddComponent<TransformComponent>(0.f, 0.f);
+	//back3RectRight->AddComponent<ColliderComponent>(500.f, 500.f);
 	back3RectRight->AddComponent<Rect2DComponent>(500.f, 500.f, GetColor(20, 20, 20));
 	back3RectRight->AddTag("Object");
 	AddObject(back3RectRight);
 
 	GameObjectPtr text1 = std::make_shared<GameObject>("text1");
 	text1->SetLayer(0);
+	text1->SetOrderInLayer(1);
 	text1->AddComponent<TransformComponent>(1280.f / 2, 30.f);
-	text1->AddComponent<Rect2DComponent>(200.f, 150.f, GetColor(20, 20, 20));
+	text1->AddComponent<Rect2DComponent>(200.f, 150.f, GetColor(150, 20, 150));
 	text1->AddComponent<TextComponent>(
-		"Hello World! ハローワールド！ おはよう！",
+		"Hello World! ハローワールド！ おはよう！(ドラッグ可)",
 		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
 		GetColor(255, 255, 255),
 		200,
@@ -120,6 +123,24 @@ void TopScene::Start()
 	text1->AddTag("Object");
 
 	AddObject(text1);
+
+	GameObjectPtr text2 = std::make_shared<GameObject>("text2");
+	text2->SetOrderInLayer(50);
+	text2->AddComponent<TransformComponent>(300.f, 100.f);
+	text2->AddComponent<Rect2DComponent>(300.f, 300.f, GetColor(255, 255, 100));
+	text2->AddComponent<TextComponent>(
+		"最前レイヤーなテキストボックス(ドラッグ可)",
+		ResourceManager::GetInstance().LoadFont("Meiryo", 40, -1),
+		GetColor(0, 0, 0),
+		300,
+		40
+	);
+	text2->AddComponent<ColliderComponent>(300.f, 300.f);
+	auto text2DComp = text2->AddComponent<DragComponent>();
+	text2DComp->mouseProvider = mouseProvider;
+	text2->AddTag("UI");
+
+	AddObject(text2);
 
 	GameObjectPtr point2d = std::make_shared<GameObject>("point2d");
 	point2d->SetLayer(0);
@@ -174,7 +195,15 @@ void TopScene::Start()
 	camera3Frame->SetOrderInLayer(10); // UI扱いにするが，他UIより下にする
 	AddObject(camera3Frame);
 
+	GameObjectPtr camera3Back = std::make_shared<GameObject>("camera3Back");
+	auto camera3BackTComp = camera3Back->AddComponent<TransformComponent>(0.f, 40.f);
+	camera3Back->AddComponent<ColliderComponent>(750.f, 250.f);
+	camera3Back->AddTag("UI");
+	camera3Back->SetOrderInLayer(9);
+	AddObject(camera3Back);
+
 	camera3TComp->SetParent(camera3Frame);
+	camera3BackTComp->SetParent(camera3Frame);
 
 	GameObjectPtr camera4Frame = std::make_shared<GameObject>("camera4Frame");
 	camera4Frame->AddComponent<TransformComponent>(400.f, 200.f);
@@ -192,7 +221,15 @@ void TopScene::Start()
 	camera4Frame->SetOrderInLayer(15); // UI扱いにするが，他UIより下にする
 	AddObject(camera4Frame);
 
+	GameObjectPtr camera4Back = std::make_shared<GameObject>("camera4Back");
+	auto camera4BackTComp = camera4Back->AddComponent<TransformComponent>(0.f, 40.f);
+	camera4Back->AddComponent<ColliderComponent>(500.f, 500.f);
+	camera4Back->AddTag("UI");
+	camera4Back->SetOrderInLayer(14);
+	AddObject(camera4Back);
+
 	camera4TComp->SetParent(camera4Frame);
+	camera4BackTComp->SetParent(camera4Frame);
 
 	// タグ「UI」を指定
 	GameObjectPtr canvas = std::make_shared<GameObject>("canvas");
@@ -223,18 +260,21 @@ void TopScene::OnButtonClickedMember()
 	// ドラッグ操作可能
 	GameObjectPtr randomRectObj = std::make_shared<GameObject>("randomRect");
 	randomRectObj->SetLayer(l);
+	randomRectObj->SetOrderInLayer(5);
 	randomRectObj->AddComponent<TransformComponent>(static_cast<float>(randX), static_cast<float>(randY));
 	randomRectObj->AddComponent<ColliderComponent>(50.f, 50.f);
 	randomRectObj->AddComponent<Rect2DComponent>(50.f, 50.f, GetColor(r, g, b));
-	randomRectObj->AddComponent<AutoDestroyComponent>(3.f);
+	randomRectObj->AddComponent<AutoDestroyComponent>(5.f);
 	randomRectObj->AddTag("Object");
 	auto dragComp = randomRectObj->AddComponent<DragComponent>();
 	dragComp->cameraSelector = cameraSelector;
 	dragComp->mouseProvider = mouseProvider;
+	dragComp->ignoreLayerCheck = true;
 	this->AddObject(randomRectObj);
 
 	GameObjectPtr attachedRectObj = std::make_shared<GameObject>("attachedRectObj");
 	attachedRectObj->SetLayer(randomRectObj->GetLayer());
+	attachedRectObj->SetOrderInLayer(randomRectObj->GetOrderInLayer() + 1);
 	attachedRectObj->AddComponent<TransformComponent>(45.f, 45.f)->SetParent(randomRectObj);
 	attachedRectObj->AddComponent<Rect2DComponent>(7.f, 7.f, GetColor(200, 200, 40));
 	attachedRectObj->AddTag("Object");

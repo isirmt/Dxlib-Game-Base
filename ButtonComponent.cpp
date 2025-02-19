@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "ColliderComponent.h"
 #include "DxLib.h"
+#include "Application.h"
 
 void ButtonComponent::AddOnHoverStartListener(Callback callback)
 {
@@ -97,6 +98,14 @@ void ButtonComponent::Update()
 
 	// ÉNÉäÉbÉNèàóù
 	if (isOver && (GetMouseInput() & MOUSE_INPUT_LEFT)) {
+		if (!ignoreLayerCheck) {
+			auto topObj = Application::GetInstance().GetTopGameObjectAtPoint();
+
+			if (!topObj || topObj.get() != GetGameObject().get()) {
+				return;
+			}
+		}
+
 		if (!isClicked) {
 			isClicked = true;
 			for (auto& func : onClickStartFuncs) { func(); }
