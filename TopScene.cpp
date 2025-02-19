@@ -6,6 +6,7 @@
 #include "Camera2DComponent.h"
 #include "ButtonComponent.h"
 #include "DragComponent.h"
+#include "ColliderComponent.h"
 #include "DxLib.h"
 #include "CameraMouseCoordinateConverter.h"
 #include "AutoDestroyComponent.h"
@@ -112,6 +113,7 @@ void TopScene::Start()
 		200,
 		30
 	);
+	text1->AddComponent<ColliderComponent>(200.f, 150.f);
 	auto text1DComp = text1->AddComponent<DragComponent>();
 	text1DComp->cameraSelector = cameraSelector;
 	text1DComp->mouseProvider = mouseProvider;
@@ -129,6 +131,7 @@ void TopScene::Start()
 	GameObjectPtr rect2d = std::make_shared<GameObject>("rect2d");
 	rect2d->SetLayer(1);
 	rect2d->AddComponent<TransformComponent>(500.f, 300.f);
+	rect2d->AddComponent<ColliderComponent>(400.f, 100.f);
 	rect2d->AddComponent<Rect2DComponent>(400.f, 100.f, GetColor(255, 0, 0));
 	rect2d->AddTag("Object");
 	AddObject(rect2d);
@@ -137,6 +140,7 @@ void TopScene::Start()
 	GameObjectPtr wButton1 = std::make_shared<GameObject>("wButton1");
 	wButton1->SetLayer(0);
 	wButton1->AddComponent<TransformComponent>(800.f, 600.f);
+	wButton1->AddComponent<ColliderComponent>(200.f, 40.f);
 	wButton1->AddComponent<Rect2DComponent>(200.f, 40.f, GetColor(0, 0, 255));
 	wButton1->AddComponent<TextComponent>(
 		"ボタン1",
@@ -156,6 +160,7 @@ void TopScene::Start()
 
 	GameObjectPtr camera3Frame = std::make_shared<GameObject>("camera3Frame");
 	camera3Frame->AddComponent<TransformComponent>(50.f, 400.f);
+	camera3Frame->AddComponent<ColliderComponent>(750.f, 40.f);
 	camera3Frame->AddComponent<Rect2DComponent>(750.f, 40.f, GetColor(0, 255, 255));
 	camera3Frame->AddComponent<TextComponent>(
 		"レイヤー1のカメラ(ドラッグ可)",
@@ -173,6 +178,7 @@ void TopScene::Start()
 
 	GameObjectPtr camera4Frame = std::make_shared<GameObject>("camera4Frame");
 	camera4Frame->AddComponent<TransformComponent>(400.f, 200.f);
+	camera4Frame->AddComponent<ColliderComponent>(500.f, 40.f);
 	camera4Frame->AddComponent<Rect2DComponent>(500.f, 40.f, GetColor(255, 255, 255));
 	camera4Frame->AddComponent<TextComponent>(
 		"レイヤー2のカメラ(ドラッグ可)",
@@ -198,6 +204,7 @@ void TopScene::Start()
 	auto canvasButtonTComp = canvasButton->AddComponent<TransformComponent>(100.f, 100.f); // ローカル座標
 	canvasButton->AddComponent<Rect2DComponent>(150.f, 50.f, GetColor(0, 255, 0));
 	canvasButtonTComp->SetParent(canvas);
+	canvasButton->AddComponent<ColliderComponent>(150.f, 50.f);
 	auto canvasButtonBComp = canvasButton->AddComponent<ButtonComponent>();
 	canvasButtonBComp->mouseProvider = mouseProvider;
 	canvasButton->AddTag("UI");
@@ -217,11 +224,13 @@ void TopScene::OnButtonClickedMember()
 	GameObjectPtr randomRectObj = std::make_shared<GameObject>("randomRect");
 	randomRectObj->SetLayer(l);
 	randomRectObj->AddComponent<TransformComponent>(static_cast<float>(randX), static_cast<float>(randY));
+	randomRectObj->AddComponent<ColliderComponent>(50.f, 50.f);
 	randomRectObj->AddComponent<Rect2DComponent>(50.f, 50.f, GetColor(r, g, b));
 	randomRectObj->AddComponent<AutoDestroyComponent>(3.f);
 	randomRectObj->AddTag("Object");
 	auto dragComp = randomRectObj->AddComponent<DragComponent>();
 	dragComp->cameraSelector = cameraSelector;
+	dragComp->mouseProvider = mouseProvider;
 	this->AddObject(randomRectObj);
 
 	GameObjectPtr attachedRectObj = std::make_shared<GameObject>("attachedRectObj");

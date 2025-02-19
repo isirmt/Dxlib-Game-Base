@@ -1,7 +1,7 @@
 #include "DragComponent.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
-#include "Rect2DComponent.h"
+#include "ColliderComponent.h"
 #include "DxLib.h"
 #include "IMouseCoordinateConverter.h"
 #include "UIMouseCoordinateConverter.h"
@@ -15,8 +15,19 @@ void DragComponent::Update()
     }
 
     auto transform = GetGameObject()->GetComponent<TransformComponent>();
-    auto rect = GetGameObject()->GetComponent<Rect2DComponent>();
-    if (!transform || !rect) return;
+    auto collider = GetGameObject()->GetComponent<ColliderComponent>();
+    if (!transform || !collider) return;
+
+    int x = static_cast<int>(transform->worldX);
+    int y = static_cast<int>(transform->worldY);
+
+    int mouseScreenX, mouseScreenY;
+    if (mouseProvider) {
+        mouseProvider->GetMousePosition(mouseScreenX, mouseScreenY);
+    }
+    else {
+        GetMousePoint(&mouseScreenX, &mouseScreenY);
+    }
 
     std::shared_ptr<IMouseCoordinateConverter> converter;
     if (cameraSelector) {
@@ -28,25 +39,10 @@ void DragComponent::Update()
 
     if (!converter) return;
 
-    int mouseScreenX, mouseScreenY;
+    int convertedX, convertedY;
+    converter->Convert(mouseScreenX, mouseScreenY, convertedX, convertedY);
 
-    if (mouseProvider) {
-        mouseProvider->GetMousePosition(mouseScreenX, mouseScreenY);
-    }
-    else {
-        GetMousePoint(&mouseScreenX, &mouseScreenY);
-    }
-    int worldMouseX, worldMouseY;
-    converter->Convert(mouseScreenX, mouseScreenY, worldMouseX, worldMouseY);
-
-	// Transform・Rect2Dを利用
-    int objX = static_cast<int>(transform->worldX);
-    int objY = static_cast<int>(transform->worldY);
-    int width = static_cast<int>(rect->sx * transform->worldScaleX);
-    int height = static_cast<int>(rect->sy * transform->worldScaleY);
-
-    bool isOver = (worldMouseX >= objX && worldMouseX <= objX + width &&
-        worldMouseY >= objY && worldMouseY <= objY + height);
+    bool isOver = collider->Contains(static_cast<float>(convertedX), static_cast<float>(convertedY));
 
     bool currentLeftDown = (GetMouseInput() & MOUSE_INPUT_LEFT) != 0;
 
@@ -54,14 +50,14 @@ void DragComponent::Update()
         // クリック開始時にドラッグ開始
         if (!wasLeftMouseDown && currentLeftDown && isOver) {
             dragging = true;
-            offsetX = worldMouseX - objX;
-            offsetY = worldMouseY - objY;
+            offsetX = convertedX - x;
+            offsetY = convertedY - y;
         }
     }
     else {
         if (currentLeftDown) {
-            transform->localX = static_cast<float>(worldMouseX - offsetX);
-            transform->localY = static_cast<float>(worldMouseY - offsetY);
+            transform->localX = static_cast<float>(convertedX - offsetX);
+            transform->localY = static_cast<float>(convertedY - offsetY);
 
         }
         else {

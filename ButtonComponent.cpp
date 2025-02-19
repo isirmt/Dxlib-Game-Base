@@ -1,7 +1,7 @@
 #include "ButtonComponent.h"
 #include "TransformComponent.h"
 #include "GameObject.h"
-#include "Rect2DComponent.h"
+#include "ColliderComponent.h"
 #include "DxLib.h"
 
 void ButtonComponent::AddOnHoverStartListener(Callback callback)
@@ -43,14 +43,8 @@ void ButtonComponent::Update()
 	}
 
 	auto transform = GetGameObject()->GetComponent<TransformComponent>();
-	auto rect = GetGameObject()->GetComponent<Rect2DComponent>();
-
-	if (!transform && !rect) return;
-
-	int x = static_cast<int>(transform->worldX);
-	int y = static_cast<int>(transform->worldY);
-	int sx = static_cast<int>(rect->sx);
-	int sy = static_cast<int>(rect->sy);
+	auto collider = GetGameObject()->GetComponent<ColliderComponent>();
+	if (!transform || !collider) return;
 
 	int mouseScreenX, mouseScreenY;
 	if (mouseProvider) {
@@ -74,12 +68,10 @@ void ButtonComponent::Update()
 	converter->Convert(mouseScreenX, mouseScreenY, convertedX, convertedY);
 
 	printfDx("%s(%s):\n", GetGameObject()->name.c_str(), GetMouseInput() & MOUSE_INPUT_LEFT ? "CLICKED" : "-");
-	printfDx("(%d,%d) W%d H%d\n", x, y, sx, sy);
 	printfDx("mouse_screen: %d, %d:\n", mouseScreenX, mouseScreenY);
 	printfDx("converted_sc: %d, %d:\n", convertedX, convertedY);
 
-	bool isOver = (convertedX >= x && convertedX <= x + sx &&
-		convertedY >= y && convertedY <= y + sy);
+	bool isOver = collider->Contains(static_cast<float>(convertedX), static_cast<float>(convertedY));
 
 	if (isHovering) {
 		printfDx("HOVERED\n");
