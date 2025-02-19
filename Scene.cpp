@@ -5,11 +5,6 @@
 #include <iterator>
 #include <functional>
 
-Scene::~Scene()
-{
-	DeleteGraph(offscreenHandle);
-}
-
 void Scene::Update()
 {
 	std::list<GameObjectPtr> objects;

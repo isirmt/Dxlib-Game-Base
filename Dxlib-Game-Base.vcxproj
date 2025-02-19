@@ -151,21 +151,21 @@
     <ClCompile Include="CameraMouseCoordinateConverter.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DragComponent.cpp" />
+    <ClCompile Include="DxMouseProvider.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="IMouseCameraSelector.cpp" />
-    <ClCompile Include="IMouseCoordinateConverter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Point2DComponent.cpp" />
     <ClCompile Include="Rect2DComponent.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="TopScene.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="UIMouseCoordinateConverter.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -175,9 +175,11 @@
     <ClInclude Include="CameraMouseCoordinateConverter.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DragComponent.h" />
+    <ClInclude Include="DxMouseProvider.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IMouseCameraSelector.h" />
     <ClInclude Include="IMouseCoordinateConverter.h" />
+    <ClInclude Include="IMouseProvider.h" />
     <ClInclude Include="Point2DComponent.h" />
     <ClInclude Include="Rect2DComponent.h" />
     <ClInclude Include="RenderTarget.h" />
@@ -189,6 +191,7 @@
     <ClInclude Include="TopScene.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="UIMouseCoordinateConverter.h" />
+    <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

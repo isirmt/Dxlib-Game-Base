@@ -3,11 +3,17 @@
 #include "UIMouseCoordinateConverter.h"
 #include "CameraMouseCoordinateConverter.h"
 #include "Camera2DComponent.h"
+#include "Application.h"
 
 std::shared_ptr<IMouseCoordinateConverter> IMouseCameraSelector::GetCurrentMouseConverter()
 {
     int mouseX, mouseY;
-    GetMousePoint(&mouseX, &mouseY);
+    if (auto mouseProv = Application::GetInstance().GetMouseProvider()) {
+        mouseProv->GetMousePosition(mouseX, mouseY);
+    }
+    else {
+        GetMousePoint(&mouseX, &mouseY);
+    }
     printfDx("Mouse: %d %d\n", mouseX, mouseY);
 
     std::shared_ptr<Camera2DComponent> selectedCamera = nullptr;

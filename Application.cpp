@@ -16,6 +16,10 @@ Application::Application() : running(true), requestedReseting(false)
         exit(EXIT_FAILURE);
     }
 
+    windowManager = std::make_shared<WindowManager>(1280, 720);
+    cameraSelector = std::make_shared<IMouseCameraSelector>();
+    mouseProvider = std::make_shared<DxMouseProvider>(windowManager);
+
     ChangeScene(std::make_shared<TopScene>());
 }
 
@@ -23,6 +27,8 @@ void Application::ChangeScene(std::shared_ptr<Scene> newScene)
 {
     scenes_.clear();
     newScene->SetAdditive(false);
+    newScene->SetCameraSelector(cameraSelector);
+    newScene->SetMouseProvider(mouseProvider);
     scenes_.push_back(newScene);
     newScene->Start();
 }
@@ -30,6 +36,8 @@ void Application::ChangeScene(std::shared_ptr<Scene> newScene)
 void Application::AdditiveScene(std::shared_ptr<Scene> additiveScene)
 {
     additiveScene->SetAdditive(true); // ƒNƒŠƒA‚Ís‚í‚È‚¢
+    additiveScene->SetCameraSelector(cameraSelector);
+    additiveScene->SetMouseProvider(mouseProvider);
     scenes_.push_back(additiveScene);
     additiveScene->Start();
 }

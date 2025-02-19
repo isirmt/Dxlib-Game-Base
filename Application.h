@@ -3,6 +3,7 @@
 #include <vector>
 #include "Scene.h"
 #include "Singleton.h"
+#include "WindowManager.h"
 
 class Application : public Singleton<Application>
 {
@@ -10,6 +11,9 @@ class Application : public Singleton<Application>
 	bool running;
 	bool requestedReseting;
 	std::vector<std::shared_ptr<Scene>> scenes_;
+	std::shared_ptr<WindowManager> windowManager;
+	std::shared_ptr<IMouseCameraSelector> cameraSelector;
+	std::shared_ptr<IMouseProvider> mouseProvider;
 
 protected:
 
@@ -24,6 +28,10 @@ public:
 	void AdditiveScene(std::shared_ptr<Scene> additiveScene);
 
 	void UnloadScene(std::shared_ptr<Scene> scene);
+
+	std::shared_ptr<IMouseProvider> GetMouseProvider() const {
+		return mouseProvider;
+	}
 
 	void Run();
 };

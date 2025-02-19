@@ -114,8 +114,9 @@ void TopScene::Start()
 	);
 	auto text1DComp = text1->AddComponent<DragComponent>();
 	text1DComp->cameraSelector = cameraSelector;
+	text1DComp->mouseProvider = mouseProvider;
 	text1->AddTag("Object");
-	
+
 	AddObject(text1);
 
 	GameObjectPtr point2d = std::make_shared<GameObject>("point2d");
@@ -144,10 +145,12 @@ void TopScene::Start()
 		0
 	);
 	auto wButton1BComp = wButton1->AddComponent<ButtonComponent>();
+	wButton1BComp->mouseProvider = mouseProvider;
 	wButton1BComp->cameraSelector = cameraSelector;
 	wButton1BComp->AddOnClickListener(std::bind(&TopScene::OnButtonClickedMember, this));
 	auto wButton1DComp = wButton1->AddComponent<DragComponent>();
 	wButton1DComp->cameraSelector = cameraSelector;
+	wButton1DComp->mouseProvider = mouseProvider;
 	wButton1->AddTag("Object");
 	AddObject(wButton1);
 
@@ -160,7 +163,8 @@ void TopScene::Start()
 		GetColor(50, 50, 200),
 		0
 	);
-	camera3Frame->AddComponent<DragComponent>();
+	auto camera3FrameDComp = camera3Frame->AddComponent<DragComponent>();
+	camera3FrameDComp->mouseProvider = mouseProvider;
 	camera3Frame->AddTag("UI");
 	camera3Frame->SetOrderInLayer(10); // UI扱いにするが，他UIより下にする
 	AddObject(camera3Frame);
@@ -176,7 +180,8 @@ void TopScene::Start()
 		GetColor(50, 50, 200),
 		0
 	);
-	camera4Frame->AddComponent<DragComponent>();
+	auto camera4FrameDComp = camera4Frame->AddComponent<DragComponent>();
+	camera4FrameDComp->mouseProvider = mouseProvider;
 	camera4Frame->AddTag("UI");
 	camera4Frame->SetOrderInLayer(15); // UI扱いにするが，他UIより下にする
 	AddObject(camera4Frame);
@@ -189,13 +194,14 @@ void TopScene::Start()
 	canvas->AddTag("UI");
 	AddObject(canvas);
 
-	GameObjectPtr canvasButton = std::make_shared<GameObject>("button");
+	GameObjectPtr canvasButton = std::make_shared<GameObject>("canvasButton");
 	auto canvasButtonTComp = canvasButton->AddComponent<TransformComponent>(100.f, 100.f); // ローカル座標
 	canvasButton->AddComponent<Rect2DComponent>(150.f, 50.f, GetColor(0, 255, 0));
 	canvasButtonTComp->SetParent(canvas);
-	canvasButton->AddComponent<ButtonComponent>();
+	auto canvasButtonBComp = canvasButton->AddComponent<ButtonComponent>();
+	canvasButtonBComp->mouseProvider = mouseProvider;
 	canvasButton->AddTag("UI");
-	AddObject(canvasButton);	
+	AddObject(canvasButton);
 }
 
 void TopScene::OnButtonClickedMember()

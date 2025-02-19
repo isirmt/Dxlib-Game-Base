@@ -36,6 +36,12 @@ void ButtonComponent::AddOnClickEndListener(Callback callback)
 
 void ButtonComponent::Update()
 {
+	if (!mouseProvider) {
+#ifdef _DEBUG
+		OutputDebugString((GetGameObject()->name + std::string(" [Warning] mouseProvider is not provided in ButtonComponent.\n")).c_str());
+#endif
+	}
+
 	auto transform = GetGameObject()->GetComponent<TransformComponent>();
 	auto rect = GetGameObject()->GetComponent<Rect2DComponent>();
 
@@ -45,6 +51,14 @@ void ButtonComponent::Update()
 	int y = static_cast<int>(transform->worldY);
 	int sx = static_cast<int>(rect->sx);
 	int sy = static_cast<int>(rect->sy);
+
+	int mouseScreenX, mouseScreenY;
+	if (mouseProvider) {
+		mouseProvider->GetMousePosition(mouseScreenX, mouseScreenY);
+	}
+	else {
+		GetMousePoint(&mouseScreenX, &mouseScreenY);
+	}
 
 	std::shared_ptr<IMouseCoordinateConverter> converter;
 	if (cameraSelector) {
@@ -57,8 +71,6 @@ void ButtonComponent::Update()
 	if (!converter) return;
 
 	int convertedX, convertedY;
-	int mouseScreenX, mouseScreenY;
-	GetMousePoint(&mouseScreenX, &mouseScreenY);
 	converter->Convert(mouseScreenX, mouseScreenY, convertedX, convertedY);
 
 	printfDx("%s(%s):\n", GetGameObject()->name.c_str(), GetMouseInput() & MOUSE_INPUT_LEFT ? "CLICKED" : "-");

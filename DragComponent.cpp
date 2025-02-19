@@ -8,6 +8,12 @@
 
 void DragComponent::Update()
 {
+    if (!mouseProvider) {
+#ifdef _DEBUG
+        OutputDebugString((GetGameObject()->name + std::string(" [Warning] mouseProvider is not provided in DragComponent.\n")).c_str());
+#endif
+    }
+
     auto transform = GetGameObject()->GetComponent<TransformComponent>();
     auto rect = GetGameObject()->GetComponent<Rect2DComponent>();
     if (!transform || !rect) return;
@@ -23,7 +29,13 @@ void DragComponent::Update()
     if (!converter) return;
 
     int mouseScreenX, mouseScreenY;
-    GetMousePoint(&mouseScreenX, &mouseScreenY);
+
+    if (mouseProvider) {
+        mouseProvider->GetMousePosition(mouseScreenX, mouseScreenY);
+    }
+    else {
+        GetMousePoint(&mouseScreenX, &mouseScreenY);
+    }
     int worldMouseX, worldMouseY;
     converter->Convert(mouseScreenX, mouseScreenY, worldMouseX, worldMouseY);
 

@@ -5,21 +5,23 @@
 #include "GameObject.h"
 #include "IMouseCameraSelector.h"
 #include "RenderTarget.h"
+#include "IMouseProvider.h"
+#include "DxMouseProvider.h"
 #include <unordered_map>
 
 class Scene : public std::enable_shared_from_this<Scene>
 {
 protected:
 	std::list<GameObjectPtr> gameObjects;
-	int offscreenHandle = 0;
 	std::shared_ptr<IMouseCameraSelector> cameraSelector;
+	std::shared_ptr<IMouseProvider> mouseProvider;
 	std::unordered_map<int, std::shared_ptr<RenderTarget>> renderTargets;
 
 	bool isAdditive = false;
 
 public:
-	Scene() : cameraSelector(std::make_shared<IMouseCameraSelector>()) {};
-	virtual ~Scene();
+	Scene() = default;
+	virtual ~Scene() = default;
 
 	virtual void Update();
 	virtual void Render();
@@ -33,6 +35,14 @@ public:
 
 	void SetAdditive(bool additive) { isAdditive = additive; }
 	bool IsAdditive() const { return isAdditive; }
+
+	void SetMouseProvider(std::shared_ptr<IMouseProvider> _mouseProvider) {
+		mouseProvider = _mouseProvider;
+	}
+
+	void SetCameraSelector(std::shared_ptr<IMouseCameraSelector> _cameraSelector) {
+		cameraSelector = _cameraSelector;
+	}
 
 private:
 	void ProcessPending();
