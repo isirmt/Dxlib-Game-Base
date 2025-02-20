@@ -4,16 +4,16 @@
 #include "Scene.h"
 #include "Singleton.h"
 #include "WindowManager.h"
+#include "SceneManager.h"
 
 class Application : public Singleton<Application>
 {
 	friend class Singleton<Application>;
 	bool running;
-	bool requestedReseting;
-	std::vector<std::shared_ptr<Scene>> scenes_;
 	std::shared_ptr<WindowManager> windowManager;
 	std::shared_ptr<IMouseCameraSelector> cameraSelector;
 	std::shared_ptr<IMouseProvider> mouseProvider;
+	std::shared_ptr<SceneManager> sceneManager;
 
 protected:
 

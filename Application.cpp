@@ -7,7 +7,7 @@
 #include "Time.h"
 #include "MousePicker.h"
 
-Application::Application() : running(true), requestedReseting(false)
+Application::Application() : running(true)
 {
 	SetGraphMode(1280, 720, 32);
 	SetWindowSize(1280, 720);
@@ -21,56 +21,39 @@ Application::Application() : running(true), requestedReseting(false)
 	windowManager = std::make_shared<WindowManager>(1280, 720);
 	cameraSelector = std::make_shared<IMouseCameraSelector>();
 	mouseProvider = std::make_shared<DxMouseProvider>(windowManager);
+	sceneManager = std::make_shared<SceneManager>();
 
 	ChangeScene(std::make_shared<TopScene>());
 }
 
 void Application::ChangeScene(std::shared_ptr<Scene> newScene)
 {
-	scenes_.clear();
-	newScene->SetAdditive(false);
 	newScene->SetCameraSelector(cameraSelector);
 	newScene->SetMouseProvider(mouseProvider);
-	scenes_.push_back(newScene);
-	newScene->Start();
+	sceneManager->ChangeScene(newScene);
 }
 
 void Application::AdditiveScene(std::shared_ptr<Scene> additiveScene)
 {
-	additiveScene->SetAdditive(true); // クリアは行わない
 	additiveScene->SetCameraSelector(cameraSelector);
 	additiveScene->SetMouseProvider(mouseProvider);
-	scenes_.push_back(additiveScene);
-	additiveScene->Start();
+	sceneManager->AdditiveScene(additiveScene);
 }
 
 void Application::UnloadScene(std::shared_ptr<Scene> scene)
 {
-	scenes_.erase(std::remove(scenes_.begin(), scenes_.end(), scene), scenes_.end());
+	sceneManager->UnloadScene(scene);
 }
 
 void Application::Update()
 {
-	Time& time = Time::GetInstance();
-	time.Update();
-	for (auto& scene : scenes_)
-	{
-		scene->Update();
-		// ベースシーンに対してリセット要求があるか
-		if (!scene->IsAdditive() && requestedReseting)
-		{
-			requestedReseting = false;
-			scene->Reset();
-		}
-	}
+	Time::GetInstance().Update();
+	sceneManager->Update();
 }
 
 void Application::Render()
 {
-	for (auto& scene : scenes_)
-	{
-		scene->Render();
-	}
+	sceneManager->Render();
 }
 
 std::shared_ptr<GameObject> Application::GetTopGameObjectAtPoint()
@@ -84,7 +67,7 @@ std::shared_ptr<GameObject> Application::GetTopGameObjectAtPoint()
 	}
 
 	MousePicker picker;
-	return picker.GetTopGameObjectAtPoint(scenes_, mouseScreenX, mouseScreenY, cameraSelector);
+	return picker.GetTopGameObjectAtPoint(sceneManager->GetScenes(), mouseScreenX, mouseScreenY, cameraSelector);
 }
 
 void Application::Run()
