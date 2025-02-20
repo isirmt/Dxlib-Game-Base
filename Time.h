@@ -1,52 +1,44 @@
 #pragma once
 #include <chrono>
 #include <thread>
+
 #include "DxLib.h"
 #include "Singleton.h"
 
-class Time : public Singleton<Time>
-{
-	friend class Singleton<Time>;
-	static float deltaTime;
-	static float targetFPS;
-	static bool unlimitedFPS;
+class Time : public Singleton<Time> {
+  friend class Singleton<Time>;
+  static float deltaTime;
+  static float targetFPS;
+  static bool unlimitedFPS;
 
-protected:
+ protected:
+  Time() = default;
 
-	Time() = default;
+ public:
+  float GetDeltaTime() const { return deltaTime; }
 
-public:
-	float GetDeltaTime() const {
-		return deltaTime;
-	}
+  void SetTargetFPS(float fps) { targetFPS = fps; }
 
-	void SetTargetFPS(float fps) {
-		targetFPS = fps;
-	}
+  void SetunlimitedFPS(bool flag) { unlimitedFPS = flag; }
 
-	void SetunlimitedFPS(bool flag) {
-		unlimitedFPS = flag;
-	}
-
-	void Update() {
-		using namespace std::chrono;
-		static auto lastTime = high_resolution_clock::now();
-		auto currentTime = high_resolution_clock::now();
-		duration<float> elapsed = currentTime - lastTime;
-		deltaTime = elapsed.count();
-		lastTime = currentTime;
+  void Update() {
+    using namespace std::chrono;
+    static auto lastTime = high_resolution_clock::now();
+    auto currentTime = high_resolution_clock::now();
+    duration<float> elapsed = currentTime - lastTime;
+    deltaTime = elapsed.count();
+    lastTime = currentTime;
 #ifdef _DEBUG
-		printfDx("delta time: %.5f\n", deltaTime);
-		printfDx("fps(estimation): %d\n", static_cast<int>(1.f / deltaTime + .5f));
+    printfDx("delta time: %.5f\n", deltaTime);
+    printfDx("fps(estimation): %d\n", static_cast<int>(1.f / deltaTime + .5f));
 #endif
 
-		if (!unlimitedFPS) {
-			float frameTime = 1.f / targetFPS;
-			if (deltaTime < frameTime) {
-				std::this_thread::sleep_for(duration<float>(frameTime - deltaTime));
-				deltaTime = frameTime;
-			}
-		}
-	}
+    if (!unlimitedFPS) {
+      float frameTime = 1.f / targetFPS;
+      if (deltaTime < frameTime) {
+        std::this_thread::sleep_for(duration<float>(frameTime - deltaTime));
+        deltaTime = frameTime;
+      }
+    }
+  }
 };
-

@@ -1,14 +1,12 @@
 #pragma once
 #include "Component.h"
-class AutoDestroyComponent :
-    public Component
-{
-public:
-    float seconds;
-    float remain;
 
-    AutoDestroyComponent(float _seconds) : seconds(_seconds), remain(_seconds) {}
+class AutoDestroyComponent : public Component {
+ public:
+  float seconds;
+  float remain;
 
-    void Update() override;
+  AutoDestroyComponent(float _seconds) : seconds(_seconds), remain(_seconds) {}
+
+  void Update() override;
 };
-

@@ -1,15 +1,12 @@
 #pragma once
 #include "Scene.h"
 
-class TopScene :
-	public Scene
-{
-public:
-	TopScene() {}
+class TopScene : public Scene {
+ public:
+  TopScene() {}
 
-	void Start() override;
+  void Start() override;
 
-private:
-	void OnButtonClickedMember();
+ private:
+  void OnButtonClickedMember();
 };
-

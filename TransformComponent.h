@@ -1,33 +1,39 @@
 #pragma once
-#include "Component.h"
 #include <list>
 
-class TransformComponent :
-	public Component
-{
-public:
-	std::shared_ptr<GameObject> parent;
-	std::list<std::shared_ptr<GameObject>> children;
+#include "Component.h"
 
-	// ローカル変換
-	float localX, localY;
-	float localRotation;
-	float localScaleX, localScaleY;
+class TransformComponent : public Component {
+ public:
+  std::shared_ptr<GameObject> parent;
+  std::list<std::shared_ptr<GameObject>> children;
 
-	// ワールド変換
-	float worldX, worldY;
-	float worldRotation;
-	float worldScaleX, worldScaleY;
+  // ローカル変換
+  float localX, localY;
+  float localRotation;
+  float localScaleX, localScaleY;
 
-	TransformComponent(float x = 0, float y = 0, float rotation = 0, float scaleX = 1, float scaleY = 1)
-		: localX(x), localY(y), localRotation(rotation), localScaleX(scaleX), localScaleY(scaleY),
-		worldX(x), worldY(y), worldRotation(rotation), worldScaleX(scaleX), worldScaleY(scaleY) {
-	}
+  // ワールド変換
+  float worldX, worldY;
+  float worldRotation;
+  float worldScaleX, worldScaleY;
 
-	void SetParent(std::shared_ptr<GameObject> newParent);
+  TransformComponent(float x = 0, float y = 0, float rotation = 0,
+                     float scaleX = 1, float scaleY = 1)
+      : localX(x),
+        localY(y),
+        localRotation(rotation),
+        localScaleX(scaleX),
+        localScaleY(scaleY),
+        worldX(x),
+        worldY(y),
+        worldRotation(rotation),
+        worldScaleX(scaleX),
+        worldScaleY(scaleY) {}
 
-	void UpdateWorldTransform();
+  void SetParent(std::shared_ptr<GameObject> newParent);
 
-	void Update() override;
+  void UpdateWorldTransform();
+
+  void Update() override;
 };
-
