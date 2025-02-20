@@ -5,7 +5,6 @@
 #include "CameraMouseCoordinateConverter.h"
 #include "DxLib.h"
 #include "InputManager.h"
-#include "UIMouseCoordinateConverter.h"
 
 std::shared_ptr<IMouseCoordinateConverter>
 IMouseCameraSelector::GetCurrentMouseConverter() {

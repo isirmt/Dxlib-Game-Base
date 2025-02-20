@@ -52,8 +52,6 @@ void ButtonComponent::Update() {
   if (cameraSelector) {
     converter =
         cameraSelector->GetCurrentMouseConverter(GetGameObject()->GetLayer());
-  } else {
-    converter = std::make_shared<UIMouseCoordinateConverter>();
   }
 
   if (!converter) return;

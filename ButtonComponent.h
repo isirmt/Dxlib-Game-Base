@@ -6,7 +6,6 @@
 #include "Component.h"
 #include "IMouseCameraSelector.h"
 #include "IMouseCoordinateConverter.h"
-#include "UIMouseCoordinateConverter.h"
 
 using Callback = std::function<void()>;
 

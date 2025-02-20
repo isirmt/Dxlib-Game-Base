@@ -7,7 +7,6 @@
 #include "IMouseCoordinateConverter.h"
 #include "InputManager.h"
 #include "TransformComponent.h"
-#include "UIMouseCoordinateConverter.h"
 
 void DragComponent::Update() {
   auto transform = GetGameObject()->GetComponent<TransformComponent>();
@@ -33,8 +32,6 @@ void DragComponent::Update() {
   if (cameraSelector) {
     converter =
         cameraSelector->GetCurrentMouseConverter(GetGameObject()->GetLayer());
-  } else {
-    converter = std::make_shared<UIMouseCoordinateConverter>();
   }
 
   if (!converter) return;
