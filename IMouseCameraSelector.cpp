@@ -14,9 +14,6 @@ IMouseCameraSelector::GetCurrentMouseConverter() {
   } else {
     GetMousePoint(&mouseX, &mouseY);
   }
-#ifdef _DEBUG
-  printfDx("Mouse: %d %d\n", mouseX, mouseY);
-#endif
 
   std::shared_ptr<Camera2DComponent> selectedCamera = nullptr;
 
@@ -29,10 +26,7 @@ IMouseCameraSelector::GetCurrentMouseConverter() {
     int dy = camComp->destY;
     int dWidth = camComp->destWidth;
     int dHeight = camComp->destHeight;
-#ifdef _DEBUG
-    printfDx("Camera: (%d, %d) W%d H%d, RenderLayer: %d\n", dx, dy, dWidth,
-             dHeight, camComp->renderLayer);
-#endif
+
     if (mouseX >= dx && mouseX <= dx + dWidth && mouseY >= dy &&
         mouseY <= dy + dHeight) {
       if (!selectedCamera ||
@@ -43,10 +37,6 @@ IMouseCameraSelector::GetCurrentMouseConverter() {
   }
 
   if (selectedCamera) {
-#ifdef _DEBUG
-    printfDx("[GLOBAL] Target Camera: RenderLayer: %d\n",
-             selectedCamera->renderLayer);
-#endif
     return std::make_shared<CameraMouseCoordinateConverter>(selectedCamera);
   } else {
     return nullptr;
@@ -61,9 +51,6 @@ IMouseCameraSelector::GetCurrentMouseConverter(int targetLayer) {
   } else {
     GetMousePoint(&mouseX, &mouseY);
   }
-#ifdef _DEBUG
-  printfDx("Mouse: %d %d\n", mouseX, mouseY);
-#endif
 
   std::shared_ptr<Camera2DComponent> selectedCamera = nullptr;
 
@@ -78,10 +65,7 @@ IMouseCameraSelector::GetCurrentMouseConverter(int targetLayer) {
     int dy = camComp->destY;
     int dWidth = camComp->destWidth;
     int dHeight = camComp->destHeight;
-#ifdef _DEBUG
-    printfDx("Camera (Layer %d): (%d, %d) W%d H%d, RenderLayer: %d\n",
-             targetLayer, dx, dy, dWidth, dHeight, camComp->renderLayer);
-#endif
+
     if (mouseX >= dx && mouseX <= dx + dWidth && mouseY >= dy &&
         mouseY <= dy + dHeight) {
       if (!selectedCamera ||
@@ -92,9 +76,6 @@ IMouseCameraSelector::GetCurrentMouseConverter(int targetLayer) {
   }
 
   if (selectedCamera) {
-#ifdef _DEBUG
-    printfDx("Target Camera: RenderLayer: %d\n", selectedCamera->renderLayer);
-#endif
     return std::make_shared<CameraMouseCoordinateConverter>(selectedCamera);
   } else {
     return nullptr;

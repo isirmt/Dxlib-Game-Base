@@ -9,6 +9,9 @@ class DragComponent : public Component {
   int offsetX = 0;
   int offsetY = 0;
   bool ignoreLayerCheck = false;
+  bool cancelDraggingOnConverterNull = false;
+
+  std::shared_ptr<class TransformComponent> targetTransform;
 
   std::shared_ptr<IMouseCameraSelector> cameraSelector;
 
