@@ -156,6 +156,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="IMouseCameraSelector.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MousePicker.cpp" />
     <ClCompile Include="Point2DComponent.cpp" />
     <ClCompile Include="Rect2DComponent.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="IMouseCameraSelector.h" />
     <ClInclude Include="IMouseCoordinateConverter.h" />
     <ClInclude Include="IMouseProvider.h" />
+    <ClInclude Include="MousePicker.h" />
     <ClInclude Include="Point2DComponent.h" />
     <ClInclude Include="Rect2DComponent.h" />
     <ClInclude Include="RenderTarget.h" />

@@ -243,7 +243,7 @@ void TopScene::Start()
 	auto camera3FrameDComp = camera3Frame->AddComponent<DragComponent>();
 	camera3FrameDComp->mouseProvider = mouseProvider;
 	camera3Frame->AddTag("UI");
-	camera3Frame->SetLayer(100);
+	camera3Frame->SetLayer(0);
 	camera3Frame->SetOrderInLayer(10); // UIˆµ‚¢‚É‚·‚é‚ªC‘¼UI‚æ‚è‰º‚É‚·‚é
 	AddObject(camera3Frame);
 

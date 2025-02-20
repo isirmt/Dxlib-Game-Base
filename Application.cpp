@@ -4,12 +4,8 @@
 #include "Application.h"
 #include "DxLib.h"
 #include "TopScene.h"
-#include "ColliderComponent.h"
-#include "IMouseCoordinateConverter.h"
-#include "GameObject.h"
 #include "Time.h"
-#include "UIMouseCoordinateConverter.h"
-#include "CameraMouseCoordinateConverter.h"
+#include "MousePicker.h"
 
 Application::Application() : running(true), requestedReseting(false)
 {
@@ -79,80 +75,16 @@ void Application::Render()
 
 std::shared_ptr<GameObject> Application::GetTopGameObjectAtPoint()
 {
-    int mouseScreenX, mouseScreenY;
-    if (mouseProvider) {
-        mouseProvider->GetMousePosition(mouseScreenX, mouseScreenY);
-    }
-    else {
-        GetMousePoint(&mouseScreenX, &mouseScreenY);
-    }
+	int mouseScreenX, mouseScreenY;
+	if (mouseProvider) {
+		mouseProvider->GetMousePosition(mouseScreenX, mouseScreenY);
+	}
+	else {
+		GetMousePoint(&mouseScreenX, &mouseScreenY);
+	}
 
-    // 一時的にまとめる構造体
-    struct Clickable {
-        std::shared_ptr<GameObject> obj;
-        int effectiveLayer;
-        int order;
-        std::shared_ptr<IMouseCoordinateConverter> converter;
-    };
-
-    std::vector<Clickable> clickables;
-
-    // 全シーンの全オブジェクトを対象
-    for (auto& scene : scenes_) {
-        for (auto& obj : scene->GetGameObjects()) {
-            if (!obj->IsActive() || !obj->IsVisible()) continue;
-            auto collider = obj->GetComponent<ColliderComponent>();
-            if (!collider) continue;
-
-            Clickable c;
-            c.obj = obj;
-            c.order = obj->GetOrderInLayer();
-
-            if (obj->HasTag("UI")) {
-                c.effectiveLayer = obj->GetLayer();
-                c.converter = std::make_shared<UIMouseCoordinateConverter>();
-            }
-            else {
-                bool foundCam = false;
-                for (auto& camObj : cameraSelector->cameras) {
-                    if (camObj->GetLayer() != obj->GetLayer())
-                        continue;
-                    auto camComp = camObj->GetComponent<Camera2DComponent>();
-                    if (!camComp) continue;
-                    if (mouseScreenX >= camComp->destX &&
-                        mouseScreenX <= camComp->destX + camComp->destWidth &&
-                        mouseScreenY >= camComp->destY &&
-                        mouseScreenY <= camComp->destY + camComp->destHeight)
-                    {
-                        c.effectiveLayer = camComp->renderLayer;
-                        c.converter = cameraSelector->GetCurrentMouseConverter();
-                        foundCam = true;
-                        break;
-                    }
-                }
-                if (!foundCam) {
-                    continue;
-                }
-            }
-            clickables.push_back(c);
-        }
-    }
-
-    std::sort(clickables.begin(), clickables.end(), [](const Clickable& a, const Clickable& b) {
-        if (a.effectiveLayer == b.effectiveLayer)
-            return a.order > b.order;
-        return a.effectiveLayer > b.effectiveLayer;
-        });
-
-    int convertedX, convertedY;
-    for (auto& c : clickables) {
-        if (!c.converter) continue;
-        c.converter->Convert(mouseScreenX, mouseScreenY, convertedX, convertedY);
-        if (c.obj->GetComponent<ColliderComponent>()->Contains(static_cast<float>(convertedX), static_cast<float>(convertedY))) {
-            return c.obj;
-        }
-    }
-    return nullptr;
+	MousePicker picker;
+	return picker.GetTopGameObjectAtPoint(scenes_, mouseScreenX, mouseScreenY, cameraSelector);
 }
 
 void Application::Run()
