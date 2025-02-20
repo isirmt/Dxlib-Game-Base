@@ -139,8 +139,30 @@ void TopScene::Start()
 	auto text2DComp = text2->AddComponent<DragComponent>();
 	text2DComp->mouseProvider = mouseProvider;
 	text2->AddTag("UI");
+	text2->SetLayer(100);
 
 	AddObject(text2);
+
+	GameObjectPtr text3 = std::make_shared<GameObject>("text3");
+	text3->SetLayer(0);
+	text3->SetOrderInLayer(0);
+	text3->AddComponent<TransformComponent>(1280.f / 2, 400.f);
+	text3->AddComponent<Rect2DComponent>(250.f, 150.f, GetColor(150, 150, 20));
+	text3->AddComponent<TextComponent>(
+		"好きなように掴むことができます(前後関係無視:ドラッグ可)\nまとめて掴みたい時に",
+		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
+		GetColor(255, 255, 255),
+		250,
+		30
+	);
+	text3->AddComponent<ColliderComponent>(250.f, 150.f);
+	auto text3DComp = text3->AddComponent<DragComponent>();
+	text3DComp->cameraSelector = cameraSelector;
+	text3DComp->mouseProvider = mouseProvider;
+	text3DComp->ignoreLayerCheck = true;
+	text3->AddTag("Object");
+
+	AddObject(text3);
 
 	GameObjectPtr point2d = std::make_shared<GameObject>("point2d");
 	point2d->SetLayer(0);
@@ -151,6 +173,7 @@ void TopScene::Start()
 
 	GameObjectPtr rect2d = std::make_shared<GameObject>("rect2d");
 	rect2d->SetLayer(1);
+	rect2d->SetOrderInLayer(0);
 	rect2d->AddComponent<TransformComponent>(500.f, 300.f);
 	rect2d->AddComponent<ColliderComponent>(400.f, 100.f);
 	rect2d->AddComponent<Rect2DComponent>(400.f, 100.f, GetColor(255, 0, 0));
@@ -159,12 +182,13 @@ void TopScene::Start()
 
 	// ボタン
 	GameObjectPtr wButton1 = std::make_shared<GameObject>("wButton1");
-	wButton1->SetLayer(0);
-	wButton1->AddComponent<TransformComponent>(800.f, 600.f);
+	wButton1->SetLayer(1);
+	wButton1->SetOrderInLayer(5);
+	wButton1->AddComponent<TransformComponent>(800.f, 300.f);
 	wButton1->AddComponent<ColliderComponent>(200.f, 40.f);
 	wButton1->AddComponent<Rect2DComponent>(200.f, 40.f, GetColor(0, 0, 255));
 	wButton1->AddComponent<TextComponent>(
-		"ボタン1",
+		"ボタン1(ドラッグ可)",
 		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
 		GetColor(255, 255, 255),
 		0
@@ -192,6 +216,7 @@ void TopScene::Start()
 	auto camera3FrameDComp = camera3Frame->AddComponent<DragComponent>();
 	camera3FrameDComp->mouseProvider = mouseProvider;
 	camera3Frame->AddTag("UI");
+	camera3Frame->SetLayer(100);
 	camera3Frame->SetOrderInLayer(10); // UI扱いにするが，他UIより下にする
 	AddObject(camera3Frame);
 
@@ -200,6 +225,7 @@ void TopScene::Start()
 	camera3Back->AddComponent<ColliderComponent>(750.f, 250.f);
 	camera3Back->AddTag("UI");
 	camera3Back->SetOrderInLayer(9);
+	camera3Back->SetLayer(100);
 	AddObject(camera3Back);
 
 	camera3TComp->SetParent(camera3Frame);
@@ -218,6 +244,7 @@ void TopScene::Start()
 	auto camera4FrameDComp = camera4Frame->AddComponent<DragComponent>();
 	camera4FrameDComp->mouseProvider = mouseProvider;
 	camera4Frame->AddTag("UI");
+	camera4Frame->SetLayer(100);
 	camera4Frame->SetOrderInLayer(15); // UI扱いにするが，他UIより下にする
 	AddObject(camera4Frame);
 
@@ -226,6 +253,7 @@ void TopScene::Start()
 	camera4Back->AddComponent<ColliderComponent>(500.f, 500.f);
 	camera4Back->AddTag("UI");
 	camera4Back->SetOrderInLayer(14);
+	camera4Back->SetLayer(100);
 	AddObject(camera4Back);
 
 	camera4TComp->SetParent(camera4Frame);
@@ -235,6 +263,7 @@ void TopScene::Start()
 	GameObjectPtr canvas = std::make_shared<GameObject>("canvas");
 	canvas->AddComponent<TransformComponent>(0.f, 0.f);
 	canvas->AddTag("UI");
+	canvas->SetLayer(100);
 	AddObject(canvas);
 
 	GameObjectPtr canvasButton = std::make_shared<GameObject>("canvasButton");
@@ -245,6 +274,7 @@ void TopScene::Start()
 	auto canvasButtonBComp = canvasButton->AddComponent<ButtonComponent>();
 	canvasButtonBComp->mouseProvider = mouseProvider;
 	canvasButton->AddTag("UI");
+	canvasButton->SetLayer(100);
 	AddObject(canvasButton);
 }
 
@@ -269,7 +299,7 @@ void TopScene::OnButtonClickedMember()
 	auto dragComp = randomRectObj->AddComponent<DragComponent>();
 	dragComp->cameraSelector = cameraSelector;
 	dragComp->mouseProvider = mouseProvider;
-	dragComp->ignoreLayerCheck = true;
+	//dragComp->ignoreLayerCheck = true;
 	this->AddObject(randomRectObj);
 
 	GameObjectPtr attachedRectObj = std::make_shared<GameObject>("attachedRectObj");

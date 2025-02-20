@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <algorithm>
 #include "Application.h"
 #include "DxLib.h"
 #include "TopScene.h"
@@ -8,6 +9,7 @@
 #include "GameObject.h"
 #include "Time.h"
 #include "UIMouseCoordinateConverter.h"
+#include "CameraMouseCoordinateConverter.h"
 
 Application::Application() : running(true), requestedReseting(false)
 {
@@ -77,61 +79,80 @@ void Application::Render()
 
 std::shared_ptr<GameObject> Application::GetTopGameObjectAtPoint()
 {
-	std::shared_ptr<GameObject> topObject = nullptr;
-	// 仮の最小値
-	int topLayer = -100000;
-	int topOrder = -100000;
+    int mouseScreenX, mouseScreenY;
+    if (mouseProvider) {
+        mouseProvider->GetMousePosition(mouseScreenX, mouseScreenY);
+    }
+    else {
+        GetMousePoint(&mouseScreenX, &mouseScreenY);
+    }
 
-	int mouseScreenX, mouseScreenY;
-	if (mouseProvider) {
-		mouseProvider->GetMousePosition(mouseScreenX, mouseScreenY);
-	}
-	else {
-		GetMousePoint(&mouseScreenX, &mouseScreenY);
-	}
+    // 一時的にまとめる構造体
+    struct Clickable {
+        std::shared_ptr<GameObject> obj;
+        int effectiveLayer;
+        int order;
+        std::shared_ptr<IMouseCoordinateConverter> converter;
+    };
 
-	for (auto& scene : scenes_)
-	{
-		for (auto& obj : scene->GetGameObjects())
-		{
-			if (!obj->IsActive() || !obj->IsVisible()) continue;
+    std::vector<Clickable> clickables;
 
-			auto collider = obj->GetComponent<ColliderComponent>();
-			if (!collider) continue;
+    // 全シーンの全オブジェクトを対象
+    for (auto& scene : scenes_) {
+        for (auto& obj : scene->GetGameObjects()) {
+            if (!obj->IsActive() || !obj->IsVisible()) continue;
+            auto collider = obj->GetComponent<ColliderComponent>();
+            if (!collider) continue;
 
-			std::shared_ptr<IMouseCoordinateConverter> converter;
-			if (cameraSelector) {
-				if (!obj->HasTag("UI") && !obj->HasTag("Camera")) {
-					converter = cameraSelector->GetCurrentMouseConverter(obj->GetLayer());;
-				}
-				else {
-					converter = std::make_shared<UIMouseCoordinateConverter>();
-				}
-			}
-			else {
-				OutputDebugString("Application::GetTopGameObjectAtPoint() has no cameraSelector\n");
-			}
+            Clickable c;
+            c.obj = obj;
+            c.order = obj->GetOrderInLayer();
 
-			if (!converter) continue;
+            if (obj->HasTag("UI")) {
+                c.effectiveLayer = obj->GetLayer();
+                c.converter = std::make_shared<UIMouseCoordinateConverter>();
+            }
+            else {
+                bool foundCam = false;
+                for (auto& camObj : cameraSelector->cameras) {
+                    if (camObj->GetLayer() != obj->GetLayer())
+                        continue;
+                    auto camComp = camObj->GetComponent<Camera2DComponent>();
+                    if (!camComp) continue;
+                    if (mouseScreenX >= camComp->destX &&
+                        mouseScreenX <= camComp->destX + camComp->destWidth &&
+                        mouseScreenY >= camComp->destY &&
+                        mouseScreenY <= camComp->destY + camComp->destHeight)
+                    {
+                        c.effectiveLayer = camComp->renderLayer;
+                        c.converter = cameraSelector->GetCurrentMouseConverter();
+                        foundCam = true;
+                        break;
+                    }
+                }
+                if (!foundCam) {
+                    continue;
+                }
+            }
+            clickables.push_back(c);
+        }
+    }
 
-			int convertedX, convertedY;
-			converter->Convert(mouseScreenX, mouseScreenY, convertedX, convertedY);
+    std::sort(clickables.begin(), clickables.end(), [](const Clickable& a, const Clickable& b) {
+        if (a.effectiveLayer == b.effectiveLayer)
+            return a.order > b.order;
+        return a.effectiveLayer > b.effectiveLayer;
+        });
 
-			if (collider->Contains(static_cast<float>(convertedX), static_cast<float>(convertedY)))
-			{
-				int objLayer = obj->GetLayer();
-				int objOrder = obj->GetOrderInLayer();
-
-				if (objLayer > topLayer || (objLayer == topLayer && objOrder > topOrder))
-				{
-					topLayer = objLayer;
-					topOrder = objOrder;
-					topObject = obj;
-				}
-			}
-		}
-	}
-	return topObject;
+    int convertedX, convertedY;
+    for (auto& c : clickables) {
+        if (!c.converter) continue;
+        c.converter->Convert(mouseScreenX, mouseScreenY, convertedX, convertedY);
+        if (c.obj->GetComponent<ColliderComponent>()->Contains(static_cast<float>(convertedX), static_cast<float>(convertedY))) {
+            return c.obj;
+        }
+    }
+    return nullptr;
 }
 
 void Application::Run()
