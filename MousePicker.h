@@ -4,11 +4,6 @@
 #include <algorithm>
 #include "Scene.h"
 #include "GameObject.h"
-#include "ColliderComponent.h"
-#include "IMouseCoordinateConverter.h"
-#include "UIMouseCoordinateConverter.h"
-#include "CameraMouseCoordinateConverter.h"
-#include "IMouseCameraSelector.h"
 
 class MousePicker {
 public:

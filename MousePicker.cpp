@@ -1,11 +1,16 @@
 #include "MousePicker.h"
+#include "ColliderComponent.h"
+#include "IMouseCoordinateConverter.h"
+#include "UIMouseCoordinateConverter.h"
+#include "CameraMouseCoordinateConverter.h"
+#include "IMouseCameraSelector.h"
 
 std::shared_ptr<GameObject> MousePicker::GetTopGameObjectAtPoint(const std::vector<std::shared_ptr<Scene>>& scenes, int mouseScreenX, int mouseScreenY, const std::shared_ptr<IMouseCameraSelector>& cameraSelector)
 {
     struct Clickable {
         std::shared_ptr<GameObject> obj;
-        int effectiveLayer;
-        int order;
+        int effectiveLayer = 0;
+        int order = 0;
         std::shared_ptr<IMouseCoordinateConverter> converter;
     };
 
