@@ -12,7 +12,6 @@ class Application : public Singleton<Application>
 	bool running;
 	std::shared_ptr<WindowManager> windowManager;
 	std::shared_ptr<IMouseCameraSelector> cameraSelector;
-	std::shared_ptr<IMouseProvider> mouseProvider;
 	std::shared_ptr<SceneManager> sceneManager;
 
 protected:
@@ -28,10 +27,6 @@ public:
 	void AdditiveScene(std::shared_ptr<Scene> additiveScene);
 
 	void UnloadScene(std::shared_ptr<Scene> scene);
-
-	std::shared_ptr<IMouseProvider> GetMouseProvider() const {
-		return mouseProvider;
-	}
 
 	std::shared_ptr<GameObject> GetTopGameObjectAtPoint();
 

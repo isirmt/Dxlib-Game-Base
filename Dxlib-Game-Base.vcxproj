@@ -152,9 +152,12 @@
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DragComponent.cpp" />
+    <ClCompile Include="DxKeyboardProvider.cpp" />
     <ClCompile Include="DxMouseProvider.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="IKeyboardProvider.cpp" />
     <ClCompile Include="IMouseCameraSelector.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MousePicker.cpp" />
     <ClCompile Include="Point2DComponent.cpp" />
@@ -179,11 +182,14 @@
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DragComponent.h" />
+    <ClInclude Include="DxKeyboardProvider.h" />
     <ClInclude Include="DxMouseProvider.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="IKeyboardProvider.h" />
     <ClInclude Include="IMouseCameraSelector.h" />
     <ClInclude Include="IMouseCoordinateConverter.h" />
     <ClInclude Include="IMouseProvider.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="MousePicker.h" />
     <ClInclude Include="Point2DComponent.h" />
     <ClInclude Include="Rect2DComponent.h" />

@@ -1,7 +1,6 @@
 #pragma once
 #include "Component.h"
 #include "IMouseCameraSelector.h"
-#include "IMouseProvider.h"
 
 class DragComponent : public Component {
 public:
@@ -12,7 +11,6 @@ public:
 	bool ignoreLayerCheck = false;
 
 	std::shared_ptr<IMouseCameraSelector> cameraSelector;
-	std::shared_ptr<IMouseProvider> mouseProvider;
 
 	DragComponent() = default;
 

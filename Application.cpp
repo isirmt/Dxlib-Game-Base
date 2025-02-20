@@ -6,6 +6,8 @@
 #include "TopScene.h"
 #include "Time.h"
 #include "MousePicker.h"
+#include "DxKeyboardProvider.h"
+#include "InputManager.h"
 
 Application::Application() : running(true)
 {
@@ -20,8 +22,12 @@ Application::Application() : running(true)
 
 	windowManager = std::make_shared<WindowManager>(1280, 720);
 	cameraSelector = std::make_shared<IMouseCameraSelector>();
-	mouseProvider = std::make_shared<DxMouseProvider>(windowManager);
 	sceneManager = std::make_shared<SceneManager>();
+
+	InputManager::GetInstance().Initialize(
+		std::make_shared<DxMouseProvider>(windowManager),
+		std::make_shared<DxKeyboardProvider>()
+	);
 
 	ChangeScene(std::make_shared<TopScene>());
 }
@@ -29,14 +35,12 @@ Application::Application() : running(true)
 void Application::ChangeScene(std::shared_ptr<Scene> newScene)
 {
 	newScene->SetCameraSelector(cameraSelector);
-	newScene->SetMouseProvider(mouseProvider);
 	sceneManager->ChangeScene(newScene);
 }
 
 void Application::AdditiveScene(std::shared_ptr<Scene> additiveScene)
 {
 	additiveScene->SetCameraSelector(cameraSelector);
-	additiveScene->SetMouseProvider(mouseProvider);
 	sceneManager->AdditiveScene(additiveScene);
 }
 
@@ -59,6 +63,7 @@ void Application::Render()
 std::shared_ptr<GameObject> Application::GetTopGameObjectAtPoint()
 {
 	int mouseScreenX, mouseScreenY;
+	auto mouseProvider = InputManager::GetInstance().GetMouseProvider();
 	if (mouseProvider) {
 		mouseProvider->GetMousePosition(mouseScreenX, mouseScreenY);
 	}

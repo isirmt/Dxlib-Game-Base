@@ -6,9 +6,11 @@
 #include "IMouseCoordinateConverter.h"
 #include "UIMouseCoordinateConverter.h"
 #include "Application.h"
+#include "InputManager.h"
 
 void DragComponent::Update()
 {
+    auto mouseProvider = InputManager::GetInstance().GetMouseProvider();
     if (!mouseProvider) {
 #ifdef _DEBUG
         OutputDebugString((GetGameObject()->name + std::string(" [Warning] mouseProvider is not provided in DragComponent.\n")).c_str());

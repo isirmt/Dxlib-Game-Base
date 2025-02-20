@@ -6,7 +6,6 @@
 #include "IMouseCoordinateConverter.h"
 #include "UIMouseCoordinateConverter.h"
 #include "IMouseCameraSelector.h"
-#include "IMouseProvider.h"
 
 using Callback = std::function<void()>;
 
@@ -22,7 +21,6 @@ public:
     std::vector<Callback> onClickEndFuncs;
 
     std::shared_ptr<IMouseCameraSelector> cameraSelector;
-    std::shared_ptr<IMouseProvider> mouseProvider;
 
     bool isHovering = false;
     bool isClicked = false;

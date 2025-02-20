@@ -4,6 +4,7 @@
 #include "ColliderComponent.h"
 #include "DxLib.h"
 #include "Application.h"
+#include "InputManager.h"
 
 void ButtonComponent::AddOnHoverStartListener(Callback callback)
 {
@@ -37,6 +38,7 @@ void ButtonComponent::AddOnClickEndListener(Callback callback)
 
 void ButtonComponent::Update()
 {
+	auto mouseProvider = InputManager::GetInstance().GetMouseProvider();
 	if (!mouseProvider) {
 #ifdef _DEBUG
 		OutputDebugString((GetGameObject()->name + std::string(" [Warning] mouseProvider is not provided in ButtonComponent.\n")).c_str());

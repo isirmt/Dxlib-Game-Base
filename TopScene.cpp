@@ -112,7 +112,6 @@ void TopScene::Start()
 	back0to1->AddComponent<TransformComponent>(0.f, 0.f);
 	back0to1->AddComponent<ColliderComponent>(300.f, 300.f);
 	auto back0to1DComp = back0to1->AddComponent<DragComponent>();
-	back0to1DComp->mouseProvider = mouseProvider;
 	back0to1->AddComponent<Rect2DComponent>(300.f, 300.f, GetColor(50, 100, 200));
 	back0to1->AddComponent<TextComponent>(
 		"レイヤー0，オーダー7(ドラッグ可)",
@@ -139,7 +138,6 @@ void TopScene::Start()
 	text1->AddComponent<ColliderComponent>(200.f, 150.f);
 	auto text1DComp = text1->AddComponent<DragComponent>();
 	text1DComp->cameraSelector = cameraSelector;
-	text1DComp->mouseProvider = mouseProvider;
 	text1->AddTag("Object");
 
 	AddObject(text1);
@@ -157,7 +155,6 @@ void TopScene::Start()
 	);
 	text2->AddComponent<ColliderComponent>(300.f, 300.f);
 	auto text2DComp = text2->AddComponent<DragComponent>();
-	text2DComp->mouseProvider = mouseProvider;
 	text2->AddTag("UI");
 	text2->SetLayer(100);
 
@@ -178,7 +175,6 @@ void TopScene::Start()
 	text3->AddComponent<ColliderComponent>(250.f, 150.f);
 	auto text3DComp = text3->AddComponent<DragComponent>();
 	text3DComp->cameraSelector = cameraSelector;
-	text3DComp->mouseProvider = mouseProvider;
 	text3DComp->ignoreLayerCheck = true;
 	text3->AddTag("Object");
 
@@ -221,12 +217,10 @@ void TopScene::Start()
 		0
 	);
 	auto wButton1BComp = wButton1->AddComponent<ButtonComponent>();
-	wButton1BComp->mouseProvider = mouseProvider;
 	wButton1BComp->cameraSelector = cameraSelector;
 	wButton1BComp->AddOnClickListener(std::bind(&TopScene::OnButtonClickedMember, this));
 	auto wButton1DComp = wButton1->AddComponent<DragComponent>();
 	wButton1DComp->cameraSelector = cameraSelector;
-	wButton1DComp->mouseProvider = mouseProvider;
 	wButton1->AddTag("Object");
 	AddObject(wButton1);
 
@@ -241,7 +235,6 @@ void TopScene::Start()
 		0
 	);
 	auto camera3FrameDComp = camera3Frame->AddComponent<DragComponent>();
-	camera3FrameDComp->mouseProvider = mouseProvider;
 	camera3Frame->AddTag("UI");
 	camera3Frame->SetLayer(0);
 	camera3Frame->SetOrderInLayer(10); // UI扱いにするが，他UIより下にする
@@ -260,7 +253,6 @@ void TopScene::Start()
 		0
 	);
 	auto camera4FrameDComp = camera4Frame->AddComponent<DragComponent>();
-	camera4FrameDComp->mouseProvider = mouseProvider;
 	camera4Frame->AddTag("UI");
 	camera4Frame->SetLayer(100);
 	camera4Frame->SetOrderInLayer(15);
@@ -288,7 +280,6 @@ void TopScene::Start()
 		30
 	);
 	auto canvasButtonBComp = canvasButton->AddComponent<ButtonComponent>();
-	canvasButtonBComp->mouseProvider = mouseProvider;
 	canvasButton->AddTag("UI");
 	canvasButton->SetLayer(0);
 	AddObject(canvasButton);
@@ -314,7 +305,6 @@ void TopScene::OnButtonClickedMember()
 	randomRectObj->AddTag("Object");
 	auto dragComp = randomRectObj->AddComponent<DragComponent>();
 	dragComp->cameraSelector = cameraSelector;
-	dragComp->mouseProvider = mouseProvider;
 	//dragComp->ignoreLayerCheck = true;
 	this->AddObject(randomRectObj);
 
