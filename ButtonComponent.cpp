@@ -38,23 +38,17 @@ void ButtonComponent::AddOnClickEndListener(Callback callback)
 
 void ButtonComponent::Update()
 {
-	auto mouseProvider = InputManager::GetInstance().GetMouseProvider();
-	if (!mouseProvider) {
-#ifdef _DEBUG
-		OutputDebugString((GetGameObject()->name + std::string(" [Warning] mouseProvider is not provided in ButtonComponent.\n")).c_str());
-#endif
-	}
-
 	auto transform = GetGameObject()->GetComponent<TransformComponent>();
 	auto collider = GetGameObject()->GetComponent<ColliderComponent>();
 	if (!transform || !collider) return;
 
 	int mouseScreenX, mouseScreenY;
-	if (mouseProvider) {
+	if (auto mouseProvider = InputManager::GetInstance().GetMouseProvider()) {
 		mouseProvider->GetMousePosition(mouseScreenX, mouseScreenY);
 	}
 	else {
 		GetMousePoint(&mouseScreenX, &mouseScreenY);
+		OutputDebugString((GetGameObject()->name + std::string(" [Warning] mouseProvider is not provided in ButtonComponent.\n")).c_str());
 	}
 
 	std::shared_ptr<IMouseCoordinateConverter> converter;
