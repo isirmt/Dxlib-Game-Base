@@ -15,266 +15,255 @@
 #include "TransformComponent.h"
 
 void TopScene::Start() {
-  // 予め使うため
+  auto CreateObject = [](const std::string& name) -> GameObjectPtr {
+    return std::make_shared<GameObject>(name);
+  };
+
+  // 予め使う分を宣言
   int meiryo20 = ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1);
-  int meiryo40 = ResourceManager::GetInstance().LoadFont("Meiryo", 40, -1);
+  int meiryo30 = ResourceManager::GetInstance().LoadFont("Meiryo", 30, -1);
 
   RegisterRenderTarget(0, 1280, 720);
-  RegisterRenderTarget(1, 1500, 500);
-  RegisterRenderTarget(2, 500, 500);
 
-  // カメラ
+  // カメラ1 と カメラ2の定義: 浮遊用
+  RegisterRenderTarget(1, 1000, 1000);
+  RegisterRenderTarget(2, 1280, 720);
 
-  GameObjectPtr camera1 = std::make_shared<GameObject>("camera1");
-  camera1->SetLayer(0);
-  camera1->AddComponent<TransformComponent>(0.f, 0.f);
-  camera1->AddComponent<Camera2DComponent>(0, 0, 1280 / 2, 720, 1280 / 2 / 2,
-                                           720 / 2, 0);
-  camera1->AddTag("Camera");
-  cameraSelector->cameras.push_back(camera1);
-  AddObject(camera1);
+  RegisterRenderTarget(3, 500, 500);
+  RegisterRenderTarget(4, 1280, 720);
 
-  GameObjectPtr camera2 = std::make_shared<GameObject>("camera2");
-  camera2->SetLayer(0);
-  camera2->AddComponent<TransformComponent>(1280.f / 2 + 50.f, 0.f);
-  camera2->AddComponent<Camera2DComponent>(1280 / 2, 0, 1280 / 2, 720, 1280 / 2,
-                                           720, 0);
-  camera2->AddTag("Camera");
-  cameraSelector->cameras.push_back(camera2);
-  AddObject(camera2);
+  {
+    // カメラ: 背景描画用
+    GameObjectPtr camera0 = CreateObject("camera0");
+    camera0->SetLayer(0);
+    camera0->AddComponent<TransformComponent>(0.f, 0.f);
+    camera0->AddComponent<Camera2DComponent>(0, 0, 1280, 720, 1280, 720,
+                                             camera0->GetLayer());
+    AddObject(camera0);
+    cameraSelector->cameras.push_back(camera0);
 
-  GameObjectPtr camera3 = std::make_shared<GameObject>("camera3");
-  camera3->SetLayer(1);
-  auto camera3TComp = camera3->AddComponent<TransformComponent>(0.f, 40.f);
-  camera3->AddComponent<Camera2DComponent>(0, 0, 1500, 500, 750, 250, 1);
-  camera3->AddTag("Camera");
-  camera3->SetOrderInLayer(15);
-  cameraSelector->cameras.push_back(camera3);
-  AddObject(camera3);
+    // 背景: カメラ0
+    GameObjectPtr camera0BackRect = CreateObject("camera0BackRect");
+    camera0BackRect->SetLayer(camera0->GetLayer());
+    camera0BackRect->SetOrderInLayer(-100);
+    camera0BackRect->AddComponent<TransformComponent>();
+    camera0BackRect->AddComponent<Rect2DComponent>(1280.f, 720.f,
+                                                   GetColor(239, 241, 243));
+    camera0BackRect->AddComponent<TextComponent>(
+        "カメラ0描画部分", meiryo30, GetColor(100, 100, 100));
 
-  GameObjectPtr camera4 = std::make_shared<GameObject>("camera4");
-  camera4->SetLayer(2);
-  auto camera4TComp = camera4->AddComponent<TransformComponent>(0.f, 40.f);
-  camera4->AddComponent<Camera2DComponent>(0, 0, 500, 500, 500, 500, 2);
-  camera4->AddTag("Camera");
-  camera4->SetOrderInLayer(20);
-  cameraSelector->cameras.push_back(camera4);
-  AddObject(camera4);
+    AddObject(camera0BackRect);
 
-  // 背景設定
-  GameObjectPtr backRectLeft = std::make_shared<GameObject>("backRectLeft");
-  backRectLeft->SetLayer(0);
-  backRectLeft->AddComponent<TransformComponent>(0.f, 0.f);
-  backRectLeft->AddComponent<Rect2DComponent>(1280.f / 2, 720.f,
-                                              GetColor(20, 0, 0));
-  backRectLeft->AddTag("Object");
-  AddObject(backRectLeft);
+    GameObjectPtr rectSpawningButton0 = CreateObject("rectSpawningButton0");
+    rectSpawningButton0->SetLayer(camera0->GetLayer());
+    rectSpawningButton0->SetOrderInLayer(5);
+    rectSpawningButton0->AddComponent<TransformComponent>(100.f, 400.f);
+    auto rectSpawningButton0DragComp =
+        rectSpawningButton0->AddComponent<DragComponent>();
+    rectSpawningButton0->AddComponent<ColliderComponent>(250.f, 150.f);
+    rectSpawningButton0->AddComponent<Rect2DComponent>(250.f, 150.f,
+                                                       GetColor(118, 137, 72));
+    rectSpawningButton0->AddComponent<TextComponent>(
+        "[ドラッグ可能]\nレイヤー０オブジェクト", meiryo20,
+        GetColor(10, 10, 10), 250, 45);
 
-  GameObjectPtr backRectRight = std::make_shared<GameObject>("backRectRight");
-  backRectRight->SetLayer(0);
-  backRectRight->AddComponent<TransformComponent>(1280.f / 2.f, 0.f);
-  backRectRight->AddComponent<Rect2DComponent>(1280.f / 2, 720.f,
-                                               GetColor(0, 20, 0));
-  backRectRight->AddTag("Object");
-  AddObject(backRectRight);
+    rectSpawningButton0DragComp->cameraSelector = cameraSelector;
+    rectSpawningButton0DragComp->cancelDraggingOnConverterNull = true;
+    AddObject(rectSpawningButton0);
+  }
 
-  GameObjectPtr back2RectRight = std::make_shared<GameObject>("back2RectRight");
-  back2RectRight->SetLayer(1);
-  back2RectRight->AddComponent<TransformComponent>(0.f, 0.f);
-  back2RectRight->AddComponent<ColliderComponent>(1500.f, 500.f);
-  back2RectRight->AddComponent<Rect2DComponent>(1500.f, 500.f,
-                                                GetColor(0, 0, 20));
-  back2RectRight->AddTag("Object");
-  AddObject(back2RectRight);
+  {
+    // カメラ1: 浮遊ウインドウのメイン部分
+    GameObjectPtr camera1 = CreateObject("camera1");
+    camera1->SetLayer(1);
+    auto camera1TransComp =
+        camera1->AddComponent<TransformComponent>(0.f, 40.f);
+    camera1->AddComponent<Camera2DComponent>(0, 0, 1000, 1000, 500, 500,
+                                             camera1->GetLayer());
+    AddObject(camera1);
+    cameraSelector->cameras.push_back(camera1);
 
-  GameObjectPtr back3RectRight = std::make_shared<GameObject>("back3RectRight");
-  back3RectRight->SetLayer(2);
-  back3RectRight->AddComponent<TransformComponent>(0.f, 0.f);
-  back3RectRight->AddComponent<ColliderComponent>(500.f, 500.f);
-  back3RectRight->AddComponent<Rect2DComponent>(500.f, 500.f,
-                                                GetColor(20, 20, 20));
-  back3RectRight->AddTag("Object");
-  AddObject(back3RectRight);
+    // 背景: カメラ1
+    GameObjectPtr camera1BackRect = CreateObject("camera1BackRect");
+    camera1BackRect->SetLayer(camera1->GetLayer());
+    camera1BackRect->SetOrderInLayer(-100);
+    camera1BackRect->AddComponent<TransformComponent>();
+    camera1BackRect->AddComponent<ColliderComponent>(1000.f, 1000.f);
+    camera1BackRect->AddComponent<Rect2DComponent>(1000.f, 1000.f,
+                                                   GetColor(219, 211, 216));
+    camera1BackRect->AddComponent<TextComponent>("カメラ1描画部分", meiryo30,
+                                                 GetColor(40, 40, 40));
+    AddObject(camera1BackRect);
 
-  GameObjectPtr back0to1 = std::make_shared<GameObject>("back0to1");
-  back0to1->SetLayer(0);
-  back0to1->SetOrderInLayer(7);
-  back0to1->AddComponent<TransformComponent>(0.f, 0.f);
-  back0to1->AddComponent<ColliderComponent>(300.f, 300.f);
-  auto back0to1DComp = back0to1->AddComponent<DragComponent>();
-  back0to1->AddComponent<Rect2DComponent>(300.f, 300.f, GetColor(50, 100, 200));
-  back0to1->AddComponent<TextComponent>("レイヤー0，オーダー7(ドラッグ可)",
-                                        meiryo20, GetColor(255, 255, 255), 300,
-                                        30);
-  back0to1->AddTag("UI");
-  AddObject(back0to1);
+    GameObjectPtr rectSpawningButton1 = CreateObject("rectSpawningButton1");
+    rectSpawningButton1->SetLayer(camera1->GetLayer());
+    rectSpawningButton1->SetOrderInLayer(5);
+    rectSpawningButton1->AddComponent<TransformComponent>(100.f, 100.f);
+    auto rectSpawningButton1DragComp =
+        rectSpawningButton1->AddComponent<DragComponent>();
+    rectSpawningButton1->AddComponent<ColliderComponent>(250.f, 150.f);
+    rectSpawningButton1->AddComponent<Rect2DComponent>(250.f, 150.f,
+                                                       GetColor(75, 136, 162));
+    rectSpawningButton1->AddComponent<TextComponent>(
+        "[ドラッグ可能]\nレイヤー１オブジェクト", meiryo30,
+        GetColor(10, 10, 10), 250, 45);
 
-  GameObjectPtr text1 = std::make_shared<GameObject>("text1");
-  text1->SetLayer(0);
-  text1->SetOrderInLayer(1);
-  text1->AddComponent<TransformComponent>(1280.f / 2, 30.f);
-  text1->AddComponent<Rect2DComponent>(200.f, 150.f, GetColor(150, 20, 150));
-  text1->AddComponent<TextComponent>(
-      "Hello World! ハローワールド！ おはよう！(ドラッグ可)", meiryo20,
-      GetColor(255, 255, 255), 200, 30);
-  text1->AddComponent<ColliderComponent>(200.f, 150.f);
-  auto text1DComp = text1->AddComponent<DragComponent>();
-  text1DComp->cameraSelector = cameraSelector;
-  text1->AddTag("Object");
+    rectSpawningButton1DragComp->cameraSelector = cameraSelector;
+    rectSpawningButton1DragComp->cancelDraggingOnConverterNull = true;
+    AddObject(rectSpawningButton1);
 
-  AddObject(text1);
+    // カメラ2: バナー部分
+    GameObjectPtr camera2 = CreateObject("camera2");
+    camera2->SetLayer(2);
+    camera2->AddComponent<TransformComponent>();
+    camera2->AddComponent<Camera2DComponent>(0, 0, 1280, 720, 1280, 720,
+                                             camera2->GetLayer());
+    AddObject(camera2);
+    cameraSelector->cameras.push_back(camera2);
 
-  GameObjectPtr text2 = std::make_shared<GameObject>("text2");
-  text2->SetOrderInLayer(50);
-  text2->AddComponent<TransformComponent>(300.f, 100.f);
-  text2->AddComponent<Rect2DComponent>(300.f, 300.f, GetColor(255, 255, 100));
-  text2->AddComponent<TextComponent>(
-      "最前レイヤーなテキストボックス(ドラッグ可)", meiryo40, GetColor(0, 0, 0),
-      300, 40);
-  text2->AddComponent<ColliderComponent>(300.f, 300.f);
-  auto text2DComp = text2->AddComponent<DragComponent>();
-  text2->AddTag("UI");
-  text2->SetLayer(100);
+    // 背景: カメラ2
+    GameObjectPtr camera2BackRect = CreateObject("camera2BackRect");
+    camera2BackRect->SetLayer(camera2->GetLayer());
+    camera2BackRect->SetOrderInLayer(-100);
+    camera2BackRect->AddComponent<TransformComponent>(500.f, 60.f);
+    camera2BackRect->AddComponent<ColliderComponent>(500.f, 40.f);
+    auto camera2BackRectDragComp =
+        camera2BackRect->AddComponent<DragComponent>();
+    camera2BackRect->AddComponent<Rect2DComponent>(500.f, 40.f,
+                                                   GetColor(34, 56, 67));
+    camera2BackRect->AddComponent<TextComponent>(
+        "[ドラッグ可能] カメラ2", meiryo30, GetColor(200, 200, 200));
 
-  AddObject(text2);
+    camera2BackRectDragComp->cameraSelector = cameraSelector;
+    AddObject(camera2BackRect);
 
-  GameObjectPtr text3 = std::make_shared<GameObject>("text3");
-  text3->SetLayer(0);
-  text3->SetOrderInLayer(0);
-  text3->AddComponent<TransformComponent>(1280.f / 2, 400.f);
-  text3->AddComponent<Rect2DComponent>(250.f, 150.f, GetColor(150, 150, 20));
-  text3->AddComponent<TextComponent>(
-      "好きなように掴むことができます(前後関係無視:ドラッグ可)"
-      "\nまとめて掴みたい時に",
-      meiryo20, GetColor(255, 255, 255), 250, 30);
-  text3->AddComponent<ColliderComponent>(250.f, 150.f);
-  auto text3DComp = text3->AddComponent<DragComponent>();
-  text3DComp->cameraSelector = cameraSelector;
-  text3DComp->ignoreLayerCheck = true;
-  text3->AddTag("Object");
+    { camera1TransComp->SetParent(camera2BackRect); }
+  }
 
-  AddObject(text3);
+  {
+    // カメラ3: 浮遊ウインドウのメイン部分
+    GameObjectPtr camera3 = CreateObject("camera3");
+    camera3->SetLayer(3);
+    auto camera3TransComp =
+        camera3->AddComponent<TransformComponent>(0.f, 40.f);
+    camera3->AddComponent<Camera2DComponent>(0, 0, 500, 500, 500, 500,
+                                             camera3->GetLayer());
+    AddObject(camera3);
+    cameraSelector->cameras.push_back(camera3);
 
-  GameObjectPtr point2d = std::make_shared<GameObject>("point2d");
-  point2d->SetLayer(0);
-  point2d->AddComponent<TransformComponent>(320.f, 240.f);
-  point2d->AddComponent<Point2DComponent>(GetColor(255, 0, 0));
-  point2d->AddTag("Object");
-  AddObject(point2d);
+    // 背景: カメラ3
+    GameObjectPtr camera3BackRect = CreateObject("camera3BackRect");
+    camera3BackRect->SetLayer(camera3->GetLayer());
+    camera3BackRect->SetOrderInLayer(-100);
+    camera3BackRect->AddComponent<TransformComponent>();
+    camera3BackRect->AddComponent<ColliderComponent>(500.f, 500.f);
+    camera3BackRect->AddComponent<Rect2DComponent>(500.f, 500.f,
+                                                   GetColor(216, 203, 199));
+    camera3BackRect->AddComponent<TextComponent>(
+        "カメラ3描画部分", meiryo30, GetColor(40, 40, 40));
 
-  GameObjectPtr rect2d = std::make_shared<GameObject>("rect2d");
-  rect2d->SetLayer(1);
-  rect2d->SetOrderInLayer(0);
-  rect2d->AddComponent<TransformComponent>(500.f, 300.f);
-  rect2d->AddComponent<ColliderComponent>(400.f, 100.f);
-  rect2d->AddComponent<Rect2DComponent>(400.f, 100.f, GetColor(255, 0, 0));
-  rect2d->AddComponent<TextComponent>("レイヤー1，オーダー0．判定のみ",
-                                      meiryo40, GetColor(255, 255, 255), 400,
-                                      30);
-  rect2d->AddTag("Object");
-  AddObject(rect2d);
+    AddObject(camera3BackRect);
 
-  // ボタン
-  GameObjectPtr wButton1 = std::make_shared<GameObject>("wButton1");
-  wButton1->SetLayer(1);
-  wButton1->SetOrderInLayer(5);
-  wButton1->AddComponent<TransformComponent>(800.f, 300.f);
-  wButton1->AddComponent<ColliderComponent>(200.f, 40.f);
-  wButton1->AddComponent<Rect2DComponent>(200.f, 40.f, GetColor(0, 0, 255));
-  wButton1->AddComponent<TextComponent>("ボタン1(ドラッグ可)", meiryo20,
-                                        GetColor(255, 255, 255), 0);
-  auto wButton1BComp = wButton1->AddComponent<ButtonComponent>();
-  wButton1BComp->cameraSelector = cameraSelector;
-  wButton1BComp->AddOnClickListener(
-      std::bind(&TopScene::OnButtonClickedMember, this));
-  auto wButton1DComp = wButton1->AddComponent<DragComponent>();
-  wButton1DComp->cameraSelector = cameraSelector;
-  wButton1->AddTag("Object");
-  AddObject(wButton1);
+    GameObjectPtr rectSpawningButton3 = CreateObject("rectSpawningButton3");
+    rectSpawningButton3->SetLayer(camera3->GetLayer());
+    rectSpawningButton3->SetOrderInLayer(5);
+    rectSpawningButton3->AddComponent<TransformComponent>(100.f, 100.f);
+    auto rectSpawningButton3DragComp =
+        rectSpawningButton3->AddComponent<DragComponent>();
+    rectSpawningButton3->AddComponent<ColliderComponent>(250.f, 200.f);
+    rectSpawningButton3->AddComponent<Rect2DComponent>(250.f, 200.f,
+                                                       GetColor(187, 10, 33));
+    rectSpawningButton3->AddComponent<TextComponent>(
+        "[ドラッグ可能]\n[離トリガー]\nレイヤー３オブジェクト", meiryo30,
+        GetColor(10, 10, 10), 250, 45);
+    auto rectSpawningButton3ButtonComp =
+        rectSpawningButton3->AddComponent<ButtonComponent>();
 
-  GameObjectPtr camera3Frame = std::make_shared<GameObject>("camera3Frame");
-  camera3Frame->AddComponent<TransformComponent>(50.f, 400.f);
-  camera3Frame->AddComponent<ColliderComponent>(750.f, 40.f);
-  camera3Frame->AddComponent<Rect2DComponent>(750.f, 40.f,
-                                              GetColor(0, 255, 255));
-  camera3Frame->AddComponent<TextComponent>("レイヤー1のカメラ(ドラッグ可)",
-                                            meiryo20, GetColor(50, 50, 200), 0);
-  auto camera3FrameDComp = camera3Frame->AddComponent<DragComponent>();
-  camera3Frame->AddTag("UI");
-  camera3Frame->SetLayer(0);
-  camera3Frame->SetOrderInLayer(10);  // UI扱いにするが，他UIより下にする
-  AddObject(camera3Frame);
+    rectSpawningButton3DragComp->cameraSelector = cameraSelector;
+    rectSpawningButton3ButtonComp->cameraSelector = cameraSelector;
+    rectSpawningButton3ButtonComp->AddOnClickListener(
+        std::bind(&TopScene::OnButtonClickedMember, this));
+    AddObject(rectSpawningButton3);
 
-  camera3TComp->SetParent(camera3Frame);
+    // カメラ4: バナー部分
+    GameObjectPtr camera4 = CreateObject("camera4");
+    camera4->SetLayer(4);
+    camera4->AddComponent<TransformComponent>();
+    camera4->AddComponent<Camera2DComponent>(0, 0, 1280, 720, 1280, 720,
+                                             camera4->GetLayer());
+    AddObject(camera4);
+    cameraSelector->cameras.push_back(camera4);
 
-  GameObjectPtr camera4Frame = std::make_shared<GameObject>("camera4Frame");
-  camera4Frame->AddComponent<TransformComponent>(400.f, 200.f);
-  camera4Frame->AddComponent<ColliderComponent>(500.f, 40.f);
-  camera4Frame->AddComponent<Rect2DComponent>(500.f, 40.f,
-                                              GetColor(255, 255, 255));
-  camera4Frame->AddComponent<TextComponent>("レイヤー2のカメラ(ドラッグ可)",
-                                            meiryo20, GetColor(50, 50, 200), 0);
-  auto camera4FrameDComp = camera4Frame->AddComponent<DragComponent>();
-  camera4Frame->AddTag("UI");
-  camera4Frame->SetLayer(100);
-  camera4Frame->SetOrderInLayer(15);
-  AddObject(camera4Frame);
+    // 背景: カメラ4
+    GameObjectPtr camera4BackRect = CreateObject("camera4BackRect");
+    camera4BackRect->SetLayer(camera4->GetLayer());
+    camera4BackRect->SetOrderInLayer(-100);
+    camera4BackRect->AddComponent<TransformComponent>(700.f, 150.f);
+    camera4BackRect->AddComponent<ColliderComponent>(500.f, 40.f);
+    auto camera4BackRectDragComp =
+        camera4BackRect->AddComponent<DragComponent>();
+    camera4BackRect->AddComponent<Rect2DComponent>(500.f, 40.f,
+                                                   GetColor(46, 53, 50));
+    camera4BackRect->AddComponent<TextComponent>(
+        "[ドラッグ可能] カメラ4", meiryo30, GetColor(200, 200, 200));
 
-  camera4TComp->SetParent(camera4Frame);
+    camera4BackRectDragComp->cameraSelector = cameraSelector;
+    AddObject(camera4BackRect);
 
-  // タグ「UI」を指定
-  GameObjectPtr canvas = std::make_shared<GameObject>("canvas");
-  canvas->AddComponent<TransformComponent>(0.f, 0.f);
-  canvas->AddTag("UI");
-  canvas->SetLayer(100);
-  AddObject(canvas);
+    { camera3TransComp->SetParent(camera4BackRect); }
+  }
 
-  GameObjectPtr canvasButton = std::make_shared<GameObject>("canvasButton");
-  auto canvasButtonTComp = canvasButton->AddComponent<TransformComponent>(
-      100.f, 100.f);  // ローカル座標
-  canvasButton->AddComponent<Rect2DComponent>(150.f, 50.f, GetColor(0, 255, 0));
-  canvasButtonTComp->SetParent(canvas);
-  canvasButton->AddComponent<ColliderComponent>(150.f, 50.f);
-  canvasButton->AddComponent<TextComponent>(
-      "[UI] レイヤー0，オーダー0．判定のみ", meiryo20, GetColor(255, 255, 255),
-      150, 30);
-  auto canvasButtonBComp = canvasButton->AddComponent<ButtonComponent>();
-  canvasButton->AddTag("UI");
-  canvasButton->SetLayer(0);
-  AddObject(canvasButton);
+  {
+    // 定点カメラ5
+    GameObjectPtr camera5 = CreateObject("camera5");
+    camera5->SetLayer(3);
+    camera5->AddComponent<TransformComponent>(20.f, 500.f);
+    camera5->AddComponent<Camera2DComponent>(0, 0, 500, 500, 200, 200,
+                                             3);
+    AddObject(camera5);
+    // 判定に入れない場合，cameraSelectorへは登録しない
+    //cameraSelector->cameras.push_back(camera5);
+
+    GameObjectPtr caption = CreateObject("caption");
+    caption->SetLayer(0);
+    caption->SetOrderInLayer(1000);
+    caption->AddComponent<TransformComponent>(230.f, 680.f);
+    caption->AddComponent<TextComponent>("← レイヤー3 ミニマップ", meiryo20, GetColor(30, 30, 30));
+    AddObject(caption);
+  }
 }
 
 void TopScene::OnButtonClickedMember() {
-  int randX = GetRand(1280);
-  int randY = GetRand(720);
+  int randX = GetRand(500);
+  int randY = GetRand(500);
   int r = GetRand(256);
   int g = GetRand(256);
   int b = GetRand(256);
-  int l = GetRand(2);
+  int l = GetRand(5);  // == 5のみ表示されない
+  int oIL = GetRand(10);
 
-  // ドラッグ操作可能
-  GameObjectPtr randomRectObj = std::make_shared<GameObject>("randomRect");
-  randomRectObj->SetLayer(l);
-  randomRectObj->SetOrderInLayer(10);
-  randomRectObj->AddComponent<TransformComponent>(static_cast<float>(randX),
-                                                  static_cast<float>(randY));
-  randomRectObj->AddComponent<ColliderComponent>(50.f, 50.f);
-  randomRectObj->AddComponent<Rect2DComponent>(50.f, 50.f, GetColor(r, g, b));
-  randomRectObj->AddComponent<AutoDestroyComponent>(5.f);
-  randomRectObj->AddTag("Object");
-  auto dragComp = randomRectObj->AddComponent<DragComponent>();
-  dragComp->cameraSelector = cameraSelector;
-  // dragComp->ignoreLayerCheck = true;
-  this->AddObject(randomRectObj);
+  GameObjectPtr randomRect = std::make_shared<GameObject>("randomRect");
+  randomRect->SetLayer(l);
+  randomRect->SetOrderInLayer(oIL);
+  randomRect->AddComponent<TransformComponent>(static_cast<float>(randX),
+                                               static_cast<float>(randY));
+  randomRect->AddComponent<ColliderComponent>(50.f, 50.f);
+  randomRect->AddComponent<Rect2DComponent>(50.f, 50.f, GetColor(r, g, b));
+  randomRect->AddComponent<AutoDestroyComponent>(10.f);
+  auto randomRectDragComp = randomRect->AddComponent<DragComponent>();
 
-  GameObjectPtr attachedRectObj =
-      std::make_shared<GameObject>("attachedRectObj");
-  attachedRectObj->SetLayer(randomRectObj->GetLayer());
-  attachedRectObj->SetOrderInLayer(randomRectObj->GetOrderInLayer() + 1);
-  attachedRectObj->AddComponent<TransformComponent>(45.f, 45.f)
-      ->SetParent(randomRectObj);
-  attachedRectObj->AddComponent<Rect2DComponent>(7.f, 7.f,
-                                                 GetColor(200, 200, 40));
-  attachedRectObj->AddTag("Object");
-  this->AddObject(attachedRectObj);
+  randomRectDragComp->cameraSelector = cameraSelector;
+  this->AddObject(randomRect);
+
+  GameObjectPtr randomRectChild =
+      std::make_shared<GameObject>("randomRectChild");
+  randomRectChild->SetLayer(l);
+  randomRectChild->SetOrderInLayer(oIL + 1);
+  auto randomRectChildTransComp =
+      randomRectChild->AddComponent<TransformComponent>(45.f, 45.f);
+  randomRectChild->AddComponent<Rect2DComponent>(10.f, 10.f,
+                                                 GetColor(236, 154, 41));
+
+  randomRectChildTransComp->SetParent(randomRect);
+  this->AddObject(randomRectChild);
 }

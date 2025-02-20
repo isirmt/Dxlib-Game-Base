@@ -11,7 +11,6 @@ using ComponentPtr = std::shared_ptr<Component>;
 
 class GameObject : public std::enable_shared_from_this<GameObject> {
   std::unordered_map<std::type_index, ComponentPtr> components_;
-  std::vector<std::string> tags;
   bool shouldDestroy = false;
   int layer = 0;
   int orderInLayer = 0;
@@ -21,7 +20,7 @@ class GameObject : public std::enable_shared_from_this<GameObject> {
  public:
   std::string name;
 
-  GameObject(std::string _name) : name(_name) {}
+  GameObject(std::string _name = "GameObject") : name(_name) {}
 
   template <typename T, typename... Args>
     requires std::is_constructible_v<T, Args...>
@@ -37,12 +36,6 @@ class GameObject : public std::enable_shared_from_this<GameObject> {
     auto it = components_.find(typeid(T));
     return (it != components_.end()) ? std::dynamic_pointer_cast<T>(it->second)
                                      : nullptr;
-  }
-
-  void AddTag(std::string tag) { tags.push_back(tag); }
-
-  bool HasTag(std::string tag) {
-    return std::find(tags.begin(), tags.end(), tag) != tags.end();
   }
 
   void SetOrderInLayer(int order) { orderInLayer = order; }

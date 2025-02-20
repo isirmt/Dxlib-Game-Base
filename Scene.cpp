@@ -8,50 +8,25 @@
 #include "DxLib.h"
 
 void Scene::Update() {
-  std::list<GameObjectPtr> objects;
-  std::copy_if(gameObjects.begin(), gameObjects.end(),
-               std::back_inserter(objects),
-               [](const GameObjectPtr& obj) { return obj->HasTag("Object"); });
-
-  for (auto& obj : objects) {
+  for (auto& obj : gameObjects) {
     obj->Update();
   }
-
-  std::list<GameObjectPtr> cameras;
-  std::copy_if(gameObjects.begin(), gameObjects.end(),
-               std::back_inserter(cameras),
-               [](const GameObjectPtr& obj) { return obj->HasTag("Camera"); });
-
-  for (auto& camera : cameras) {
-    camera->Update();
-  }
-
-  std::list<GameObjectPtr> uiObjects;
-  std::copy_if(gameObjects.begin(), gameObjects.end(),
-               std::back_inserter(uiObjects),
-               [](const GameObjectPtr& obj) { return obj->HasTag("UI"); });
-
-  for (auto& ui : uiObjects) {
-    ui->Update();
-  }
-
   ProcessPending();
 }
 
 void Scene::Render() {
-  // レイヤー単位で非UIオブジェクトを描画
   for (auto& [layer, renderTarget] : renderTargets) {
     SetDrawScreen(renderTarget->handle);
     ClearDrawScreen();
 
     std::vector<GameObjectPtr> layerObjects;
     for (auto& obj : gameObjects) {
-      if (!obj->HasTag("UI") && obj->GetLayer() == layer) {
+      // Camera2DComponentを持たないものを対象
+      if (obj->GetLayer() == layer && !obj->GetComponent<Camera2DComponent>()) {
         layerObjects.push_back(obj);
       }
     }
 
-    // orderInLayerでソート(大きいほど上に)
     std::sort(layerObjects.begin(), layerObjects.end(),
               [](const GameObjectPtr& a, const GameObjectPtr& b) {
                 return a->GetOrderInLayer() < b->GetOrderInLayer();
@@ -62,34 +37,26 @@ void Scene::Render() {
     }
   }
 
-  // DX_SCREEN_BACKにレンダーターゲットをカメラ越しに描画
-  SetDrawScreen(DX_SCREEN_BACK);
-
-  if (!isAdditive) {
-    ClearDrawScreen();
-  }
-
-  // レンダー構造体(順序の保持)
-
+  // Camera2DComponentを持つオブジェクト
   struct RenderCommand {
     int order;
     std::function<void()> command;
   };
   std::vector<RenderCommand> renderQueue;
 
-  // カメラによる描画
+  std::vector<GameObjectPtr> cameraObjects;
+  for (auto& obj : gameObjects) {
+    if (obj->GetComponent<Camera2DComponent>()) {
+      cameraObjects.push_back(obj);
+    }
+  }
 
-  std::list<GameObjectPtr> cameras;
-  std::copy_if(gameObjects.begin(), gameObjects.end(),
-               std::back_inserter(cameras),
-               [](const GameObjectPtr& obj) { return obj->HasTag("Camera"); });
-
-  for (auto& camera : cameras) {
-    auto camComp = camera->GetComponent<Camera2DComponent>();
+  for (auto& camObj : cameraObjects) {
+    auto camComp = camObj->GetComponent<Camera2DComponent>();
     if (camComp) {
       int layer = camComp->renderLayer;
       if (renderTargets.find(layer) != renderTargets.end()) {
-        int order = camera->GetOrderInLayer();
+        int order = camObj->GetOrderInLayer();
         int rtHandle = renderTargets[layer]->handle;
         renderQueue.push_back(
             {order, [camComp, rtHandle]() { camComp->Render(rtHandle); }});
@@ -97,31 +64,16 @@ void Scene::Render() {
     }
   }
 
-  // UIの描画
-
-  std::vector<GameObjectPtr> uiObjects;
-  for (auto& obj : gameObjects) {
-    if (obj->HasTag("UI")) {
-      uiObjects.push_back(obj);
-    }
-  }
-
-  std::sort(uiObjects.begin(), uiObjects.end(),
-            [](const GameObjectPtr& a, const GameObjectPtr& b) {
-              return a->GetOrderInLayer() < b->GetOrderInLayer();
-            });
-
-  for (auto& ui : uiObjects) {
-    int order = ui->GetOrderInLayer();
-    renderQueue.push_back({order, [ui]() { ui->Render(); }});
-  }
-
-  // キューをソート
+  // 描画順にソート
   std::sort(renderQueue.begin(), renderQueue.end(),
             [](const RenderCommand& a, const RenderCommand& b) {
               return a.order < b.order;
             });
 
+  SetDrawScreen(DX_SCREEN_BACK);
+  if (!isAdditive) {
+    ClearDrawScreen();
+  }
   for (auto& cmd : renderQueue) {
     cmd.command();
   }

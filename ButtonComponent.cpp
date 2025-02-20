@@ -52,8 +52,6 @@ void ButtonComponent::Update() {
   if (cameraSelector) {
     converter =
         cameraSelector->GetCurrentMouseConverter(GetGameObject()->GetLayer());
-  } else {
-    converter = std::make_shared<UIMouseCoordinateConverter>();
   }
 
   if (!converter) return;
@@ -61,24 +59,8 @@ void ButtonComponent::Update() {
   int convertedX, convertedY;
   converter->Convert(mouseScreenX, mouseScreenY, convertedX, convertedY);
 
-#ifdef _DEBUG
-  printfDx("%s(%s):\n", GetGameObject()->name.c_str(),
-           GetMouseInput() & MOUSE_INPUT_LEFT ? "CLICKED" : "-");
-  printfDx("mouse_screen: %d, %d:\n", mouseScreenX, mouseScreenY);
-  printfDx("converted_sc: %d, %d:\n", convertedX, convertedY);
-#endif
-
   bool isOver = collider->Contains(static_cast<float>(convertedX),
                                    static_cast<float>(convertedY));
-
-#ifdef _DEBUG
-  if (isHovering) {
-    printfDx("HOVERED\n");
-  }
-  if (isClicked) {
-    printfDx("CLICKED\n");
-  }
-#endif
 
   // ƒzƒo[ˆ—
   if (isOver) {

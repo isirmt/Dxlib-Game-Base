@@ -155,14 +155,11 @@
     <ClCompile Include="DxKeyboardProvider.cpp" />
     <ClCompile Include="DxMouseProvider.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="IKeyboardProvider.cpp" />
     <ClCompile Include="IMouseCameraSelector.cpp" />
-    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MousePicker.cpp" />
     <ClCompile Include="Point2DComponent.cpp" />
     <ClCompile Include="Rect2DComponent.cpp" />
-    <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -170,7 +167,6 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="TopScene.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
-    <ClCompile Include="UIMouseCoordinateConverter.cpp" />
     <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -202,7 +198,6 @@
     <ClInclude Include="Time.h" />
     <ClInclude Include="TopScene.h" />
     <ClInclude Include="TransformComponent.h" />
-    <ClInclude Include="UIMouseCoordinateConverter.h" />
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

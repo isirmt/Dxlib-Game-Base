@@ -18,8 +18,8 @@ class TransformComponent : public Component {
   float worldRotation;
   float worldScaleX, worldScaleY;
 
-  TransformComponent(float x = 0, float y = 0, float rotation = 0,
-                     float scaleX = 1, float scaleY = 1)
+  TransformComponent(float x = 0.f, float y = 0.f, float rotation = 0.f,
+                     float scaleX = 1.f, float scaleY = 1.f)
       : localX(x),
         localY(y),
         localRotation(rotation),

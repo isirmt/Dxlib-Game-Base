@@ -7,15 +7,16 @@
 #include "IMouseCoordinateConverter.h"
 #include "InputManager.h"
 #include "TransformComponent.h"
-#include "UIMouseCoordinateConverter.h"
 
 void DragComponent::Update() {
-  auto transform = GetGameObject()->GetComponent<TransformComponent>();
+  auto defaultTransform = GetGameObject()->GetComponent<TransformComponent>();
   auto collider = GetGameObject()->GetComponent<ColliderComponent>();
-  if (!transform || !collider) return;
+  if (!defaultTransform || !collider) return;
 
-  int x = static_cast<int>(transform->worldX);
-  int y = static_cast<int>(transform->worldY);
+  auto activeTransform = targetTransform ? targetTransform : defaultTransform;
+
+  int x = static_cast<int>(activeTransform->worldX);
+  int y = static_cast<int>(activeTransform->worldY);
 
   int mouseScreenX, mouseScreenY;
   if (auto mouseProvider = InputManager::GetInstance().GetMouseProvider()) {
@@ -33,11 +34,14 @@ void DragComponent::Update() {
   if (cameraSelector) {
     converter =
         cameraSelector->GetCurrentMouseConverter(GetGameObject()->GetLayer());
-  } else {
-    converter = std::make_shared<UIMouseCoordinateConverter>();
   }
 
-  if (!converter) return;
+  if (!converter) {
+    if (dragging && cancelDraggingOnConverterNull) {
+      dragging = false;
+    }
+    return;
+  }
 
   int convertedX, convertedY;
   converter->Convert(mouseScreenX, mouseScreenY, convertedX, convertedY);
@@ -64,9 +68,8 @@ void DragComponent::Update() {
     }
   } else {
     if (currentLeftDown) {
-      transform->localX = static_cast<float>(convertedX - offsetX);
-      transform->localY = static_cast<float>(convertedY - offsetY);
-
+      activeTransform->localX = static_cast<float>(convertedX - offsetX);
+      activeTransform->localY = static_cast<float>(convertedY - offsetY);
     } else {
       // マウスボタン離した時
       dragging = false;
