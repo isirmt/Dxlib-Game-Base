@@ -15,7 +15,9 @@
 
 void TopScene::Start()
 {
-	ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1);
+	// 予め使うため
+	int meiryo20 = ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1);
+	int meiryo40 = ResourceManager::GetInstance().LoadFont("Meiryo", 40, -1);
 
 	RegisterRenderTarget(0, 1280, 720);
 	RegisterRenderTarget(1, 1500, 500);
@@ -91,7 +93,7 @@ void TopScene::Start()
 	GameObjectPtr back2RectRight = std::make_shared<GameObject>("back2RectRight");
 	back2RectRight->SetLayer(1);
 	back2RectRight->AddComponent<TransformComponent>(0.f, 0.f);
-	//back2RectRight->AddComponent<ColliderComponent>(1500.f, 500.f);
+	back2RectRight->AddComponent<ColliderComponent>(1500.f, 500.f);
 	back2RectRight->AddComponent<Rect2DComponent>(1500.f, 500.f, GetColor(0, 0, 20));
 	back2RectRight->AddTag("Object");
 	AddObject(back2RectRight);
@@ -99,10 +101,28 @@ void TopScene::Start()
 	GameObjectPtr back3RectRight = std::make_shared<GameObject>("back3RectRight");
 	back3RectRight->SetLayer(2);
 	back3RectRight->AddComponent<TransformComponent>(0.f, 0.f);
-	//back3RectRight->AddComponent<ColliderComponent>(500.f, 500.f);
+	back3RectRight->AddComponent<ColliderComponent>(500.f, 500.f);
 	back3RectRight->AddComponent<Rect2DComponent>(500.f, 500.f, GetColor(20, 20, 20));
 	back3RectRight->AddTag("Object");
 	AddObject(back3RectRight);
+
+	GameObjectPtr back0to1 = std::make_shared<GameObject>("back0to1");
+	back0to1->SetLayer(0);
+	back0to1->SetOrderInLayer(7);
+	back0to1->AddComponent<TransformComponent>(0.f, 0.f);
+	back0to1->AddComponent<ColliderComponent>(300.f, 300.f);
+	auto back0to1DComp = back0to1->AddComponent<DragComponent>();
+	back0to1DComp->mouseProvider = mouseProvider;
+	back0to1->AddComponent<Rect2DComponent>(300.f, 300.f, GetColor(50, 100, 200));
+	back0to1->AddComponent<TextComponent>(
+		"レイヤー0，オーダー7(ドラッグ可)",
+		meiryo20,
+		GetColor(255, 255, 255),
+		300,
+		30
+	);
+	back0to1->AddTag("UI");
+	AddObject(back0to1);
 
 	GameObjectPtr text1 = std::make_shared<GameObject>("text1");
 	text1->SetLayer(0);
@@ -111,7 +131,7 @@ void TopScene::Start()
 	text1->AddComponent<Rect2DComponent>(200.f, 150.f, GetColor(150, 20, 150));
 	text1->AddComponent<TextComponent>(
 		"Hello World! ハローワールド！ おはよう！(ドラッグ可)",
-		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
+		meiryo20,
 		GetColor(255, 255, 255),
 		200,
 		30
@@ -130,7 +150,7 @@ void TopScene::Start()
 	text2->AddComponent<Rect2DComponent>(300.f, 300.f, GetColor(255, 255, 100));
 	text2->AddComponent<TextComponent>(
 		"最前レイヤーなテキストボックス(ドラッグ可)",
-		ResourceManager::GetInstance().LoadFont("Meiryo", 40, -1),
+		meiryo40,
 		GetColor(0, 0, 0),
 		300,
 		40
@@ -150,7 +170,7 @@ void TopScene::Start()
 	text3->AddComponent<Rect2DComponent>(250.f, 150.f, GetColor(150, 150, 20));
 	text3->AddComponent<TextComponent>(
 		"好きなように掴むことができます(前後関係無視:ドラッグ可)\nまとめて掴みたい時に",
-		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
+		meiryo20,
 		GetColor(255, 255, 255),
 		250,
 		30
@@ -177,6 +197,13 @@ void TopScene::Start()
 	rect2d->AddComponent<TransformComponent>(500.f, 300.f);
 	rect2d->AddComponent<ColliderComponent>(400.f, 100.f);
 	rect2d->AddComponent<Rect2DComponent>(400.f, 100.f, GetColor(255, 0, 0));
+	rect2d->AddComponent<TextComponent>(
+		"レイヤー1，オーダー0．判定のみ",
+		meiryo40,
+		GetColor(255, 255, 255),
+		400,
+		30
+	);
 	rect2d->AddTag("Object");
 	AddObject(rect2d);
 
@@ -189,7 +216,7 @@ void TopScene::Start()
 	wButton1->AddComponent<Rect2DComponent>(200.f, 40.f, GetColor(0, 0, 255));
 	wButton1->AddComponent<TextComponent>(
 		"ボタン1(ドラッグ可)",
-		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
+		meiryo20,
 		GetColor(255, 255, 255),
 		0
 	);
@@ -209,7 +236,7 @@ void TopScene::Start()
 	camera3Frame->AddComponent<Rect2DComponent>(750.f, 40.f, GetColor(0, 255, 255));
 	camera3Frame->AddComponent<TextComponent>(
 		"レイヤー1のカメラ(ドラッグ可)",
-		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
+		meiryo20,
 		GetColor(50, 50, 200),
 		0
 	);
@@ -220,16 +247,7 @@ void TopScene::Start()
 	camera3Frame->SetOrderInLayer(10); // UI扱いにするが，他UIより下にする
 	AddObject(camera3Frame);
 
-	GameObjectPtr camera3Back = std::make_shared<GameObject>("camera3Back");
-	auto camera3BackTComp = camera3Back->AddComponent<TransformComponent>(0.f, 40.f);
-	camera3Back->AddComponent<ColliderComponent>(750.f, 250.f);
-	camera3Back->AddTag("UI");
-	camera3Back->SetOrderInLayer(9);
-	camera3Back->SetLayer(100);
-	AddObject(camera3Back);
-
 	camera3TComp->SetParent(camera3Frame);
-	camera3BackTComp->SetParent(camera3Frame);
 
 	GameObjectPtr camera4Frame = std::make_shared<GameObject>("camera4Frame");
 	camera4Frame->AddComponent<TransformComponent>(400.f, 200.f);
@@ -237,7 +255,7 @@ void TopScene::Start()
 	camera4Frame->AddComponent<Rect2DComponent>(500.f, 40.f, GetColor(255, 255, 255));
 	camera4Frame->AddComponent<TextComponent>(
 		"レイヤー2のカメラ(ドラッグ可)",
-		ResourceManager::GetInstance().LoadFont("Meiryo", 20, -1),
+		meiryo20,
 		GetColor(50, 50, 200),
 		0
 	);
@@ -245,19 +263,10 @@ void TopScene::Start()
 	camera4FrameDComp->mouseProvider = mouseProvider;
 	camera4Frame->AddTag("UI");
 	camera4Frame->SetLayer(100);
-	camera4Frame->SetOrderInLayer(15); // UI扱いにするが，他UIより下にする
+	camera4Frame->SetOrderInLayer(15);
 	AddObject(camera4Frame);
 
-	GameObjectPtr camera4Back = std::make_shared<GameObject>("camera4Back");
-	auto camera4BackTComp = camera4Back->AddComponent<TransformComponent>(0.f, 40.f);
-	camera4Back->AddComponent<ColliderComponent>(500.f, 500.f);
-	camera4Back->AddTag("UI");
-	camera4Back->SetOrderInLayer(14);
-	camera4Back->SetLayer(100);
-	AddObject(camera4Back);
-
 	camera4TComp->SetParent(camera4Frame);
-	camera4BackTComp->SetParent(camera4Frame);
 
 	// タグ「UI」を指定
 	GameObjectPtr canvas = std::make_shared<GameObject>("canvas");
@@ -271,10 +280,17 @@ void TopScene::Start()
 	canvasButton->AddComponent<Rect2DComponent>(150.f, 50.f, GetColor(0, 255, 0));
 	canvasButtonTComp->SetParent(canvas);
 	canvasButton->AddComponent<ColliderComponent>(150.f, 50.f);
+	canvasButton->AddComponent<TextComponent>(
+		"[UI] レイヤー0，オーダー0．判定のみ",
+		meiryo20,
+		GetColor(255, 255, 255),
+		150,
+		30
+	);
 	auto canvasButtonBComp = canvasButton->AddComponent<ButtonComponent>();
 	canvasButtonBComp->mouseProvider = mouseProvider;
 	canvasButton->AddTag("UI");
-	canvasButton->SetLayer(100);
+	canvasButton->SetLayer(0);
 	AddObject(canvasButton);
 }
 
@@ -290,7 +306,7 @@ void TopScene::OnButtonClickedMember()
 	// ドラッグ操作可能
 	GameObjectPtr randomRectObj = std::make_shared<GameObject>("randomRect");
 	randomRectObj->SetLayer(l);
-	randomRectObj->SetOrderInLayer(5);
+	randomRectObj->SetOrderInLayer(10);
 	randomRectObj->AddComponent<TransformComponent>(static_cast<float>(randX), static_cast<float>(randY));
 	randomRectObj->AddComponent<ColliderComponent>(50.f, 50.f);
 	randomRectObj->AddComponent<Rect2DComponent>(50.f, 50.f, GetColor(r, g, b));
