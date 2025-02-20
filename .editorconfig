@@ -1,6 +1,8 @@
 # Visual Studio で、C++ の設定で .editorconfig ファイルが生成されました。
 root = true
 
+[*.{c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
+
 # Visual C++ コード スタイルの設定
 
 cpp_generate_documentation_comments = doxygen_slash_star

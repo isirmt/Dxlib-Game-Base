@@ -21,7 +21,7 @@ class GameObject : public std::enable_shared_from_this<GameObject> {
  public:
   std::string name;
 
-  GameObject(std::string _name) : name(_name) {}
+  GameObject(std::string _name = "GameObject") : name(_name) {}
 
   template <typename T, typename... Args>
     requires std::is_constructible_v<T, Args...>
