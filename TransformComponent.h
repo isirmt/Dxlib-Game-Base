@@ -36,7 +36,7 @@ class TransformComponent : public Component {
    * @brief 座標変換コンポーネント．初期値の設定が可能
    * @param x 初期値0
    * @param y 初期値0
-   * @param rotation 角度(ラジアン) 初期値0
+   * @param rotation 角度(度数法) 初期値0
    * @param scaleX 初期値1
    * @param scaleY 初期値1
    */
