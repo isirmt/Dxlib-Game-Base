@@ -17,7 +17,7 @@ Application::Application() : running(true) {
   }
 
   windowManager = std::make_shared<WindowManager>(1280, 720);
-  cameraSelector = std::make_shared<IMouseCameraSelector>();
+  cameraSelector = std::make_shared<MouseCameraSelector>();
   sceneManager = std::make_shared<SceneManager>();
 
   InputManager::GetInstance().Initialize(

@@ -1,4 +1,4 @@
-#include "IMouseCameraSelector.h"
+#include "MouseCameraSelector.h"
 
 #include "Application.h"
 #include "Camera2DComponent.h"
@@ -7,7 +7,7 @@
 #include "InputManager.h"
 
 std::shared_ptr<IMouseCoordinateConverter>
-IMouseCameraSelector::GetCurrentMouseConverter() {
+MouseCameraSelector::GetCurrentMouseConverter() {
   int mouseX, mouseY;
   if (auto mouseProvider = InputManager::GetInstance().GetMouseProvider()) {
     mouseProvider->GetMousePosition(mouseX, mouseY);
@@ -44,7 +44,7 @@ IMouseCameraSelector::GetCurrentMouseConverter() {
 }
 
 std::shared_ptr<IMouseCoordinateConverter>
-IMouseCameraSelector::GetCurrentMouseConverter(int targetLayer) {
+MouseCameraSelector::GetCurrentMouseConverter(int targetLayer) {
   int mouseX, mouseY;
   if (auto mouseProvider = InputManager::GetInstance().GetMouseProvider()) {
     mouseProvider->GetMousePosition(mouseX, mouseY);

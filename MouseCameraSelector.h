@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "IMouseCoordinateConverter.h"
 
-class IMouseCameraSelector {
+class MouseCameraSelector {
  public:
   std::vector<std::shared_ptr<GameObject>> cameras;
 

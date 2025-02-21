@@ -4,13 +4,13 @@
 
 #include "Camera2DComponent.h"
 #include "ColliderComponent.h"
-#include "IMouseCameraSelector.h"
+#include "MouseCameraSelector.h"
 #include "IMouseCoordinateConverter.h"
 
 std::shared_ptr<GameObject> MousePicker::GetTopGameObjectAtPoint(
     const std::vector<std::shared_ptr<Scene>>& scenes, int mouseScreenX,
     int mouseScreenY,
-    const std::shared_ptr<IMouseCameraSelector>& cameraSelector) {
+    const std::shared_ptr<MouseCameraSelector>& cameraSelector) {
   struct Clickable {
     std::shared_ptr<GameObject> obj;
     int effectiveLayer = 0;
@@ -22,7 +22,7 @@ std::shared_ptr<GameObject> MousePicker::GetTopGameObjectAtPoint(
 
   for (const auto& scene : scenes) {
     for (const auto& obj : scene->GetGameObjects()) {
-      if (!obj->IsActive() || !obj->IsVisible()) continue;
+      if (!obj->IsActive()) continue;
       auto collider = obj->GetComponent<ColliderComponent>();
       if (!collider) continue;
 

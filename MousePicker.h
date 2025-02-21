@@ -10,5 +10,5 @@ class MousePicker {
   std::shared_ptr<GameObject> GetTopGameObjectAtPoint(
       const std::vector<std::shared_ptr<Scene>>& scenes, int mouseScreenX,
       int mouseScreenY,
-      const std::shared_ptr<IMouseCameraSelector>& cameraSelector);
+      const std::shared_ptr<MouseCameraSelector>& cameraSelector);
 };
