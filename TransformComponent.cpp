@@ -8,14 +8,14 @@
 
 void TransformComponent::SetParent(std::shared_ptr<GameObject> newParent) {
   if (auto currentObj = GetGameObject()) {
-    if (parent) {
-      auto& siblings = parent->GetComponent<TransformComponent>()->children;
+    if (auto oldParent = parent.lock()) {
+      auto& siblings = oldParent->GetComponent<TransformComponent>()->children;
       siblings.erase(std::remove(siblings.begin(), siblings.end(), currentObj),
                      siblings.end());
     }
     parent = newParent;
-    if (parent) {
-      parent->GetComponent<TransformComponent>()->children.push_back(
+    if (newParent) {
+      newParent->GetComponent<TransformComponent>()->children.push_back(
           currentObj);
       UpdateWorldTransform();
     }
@@ -23,8 +23,8 @@ void TransformComponent::SetParent(std::shared_ptr<GameObject> newParent) {
 }
 
 void TransformComponent::UpdateWorldTransform() {
-  if (parent) {
-    if (auto parentTransform = parent->GetComponent<TransformComponent>()) {
+  if (auto parentPtr = parent.lock()) {
+    if (auto parentTransform = parentPtr->GetComponent<TransformComponent>()) {
       float pX = parentTransform->worldX;
       float pY = parentTransform->worldY;
       float pRot = parentTransform->worldRotation;

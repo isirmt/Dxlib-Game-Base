@@ -5,7 +5,7 @@
 
 class TransformComponent : public Component {
  public:
-  std::shared_ptr<GameObject> parent;
+  std::weak_ptr<GameObject> parent;
   std::list<std::shared_ptr<GameObject>> children;
 
   // ƒ[ƒJƒ‹•ÏŠ·
