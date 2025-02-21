@@ -40,6 +40,7 @@ void Scene::Render() {
   // Camera2DComponentを持つオブジェクト
   struct RenderCommand {
     int order;
+    int objectLayer;
     std::function<void()> command;
   };
   std::vector<RenderCommand> renderQueue;
@@ -57,9 +58,11 @@ void Scene::Render() {
       int layer = camComp->renderLayer;
       if (renderTargets.find(layer) != renderTargets.end()) {
         int order = camObj->GetOrderInLayer();
+        int objectLayer = camObj->GetLayer();
         int rtHandle = renderTargets[layer]->handle;
-        renderQueue.push_back(
-            {order, [camComp, rtHandle]() { camComp->Render(rtHandle); }});
+        renderQueue.push_back({order, objectLayer, [camComp, rtHandle]() {
+                                 camComp->Render(rtHandle);
+                               }});
       }
     }
   }
@@ -67,7 +70,8 @@ void Scene::Render() {
   // 描画順にソート
   std::sort(renderQueue.begin(), renderQueue.end(),
             [](const RenderCommand& a, const RenderCommand& b) {
-              return a.order < b.order;
+              if (a.objectLayer == b.objectLayer) return a.order < b.order;
+              return a.objectLayer < b.objectLayer;
             });
 
   SetDrawScreen(DX_SCREEN_BACK);

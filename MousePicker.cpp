@@ -5,7 +5,7 @@
 #include "Camera2DComponent.h"
 #include "ColliderComponent.h"
 #include "MouseCameraSelector.h"
-#include "IMouseCoordinateConverter.h"
+#include "CameraMouseCoordinateConverter.h"
 
 std::shared_ptr<GameObject> MousePicker::GetTopGameObjectAtPoint(
     const std::vector<std::shared_ptr<Scene>>& scenes, int mouseScreenX,
@@ -15,7 +15,7 @@ std::shared_ptr<GameObject> MousePicker::GetTopGameObjectAtPoint(
     std::shared_ptr<GameObject> obj;
     int effectiveLayer = 0;
     int order = 0;
-    std::shared_ptr<IMouseCoordinateConverter> converter;
+    std::shared_ptr<CameraMouseCoordinateConverter> converter;
   };
 
   std::vector<Clickable> clickables;

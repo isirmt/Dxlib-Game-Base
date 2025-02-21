@@ -6,7 +6,7 @@
 #include "DxLib.h"
 #include "InputManager.h"
 
-std::shared_ptr<IMouseCoordinateConverter>
+std::shared_ptr<CameraMouseCoordinateConverter>
 MouseCameraSelector::GetCurrentMouseConverter() {
   int mouseX, mouseY;
   if (auto mouseProvider = InputManager::GetInstance().GetMouseProvider()) {
@@ -17,7 +17,6 @@ MouseCameraSelector::GetCurrentMouseConverter() {
 
   std::shared_ptr<Camera2DComponent> selectedCamera = nullptr;
 
-  // renderLayerが最も高いものを選択
   for (auto& camObj : cameras) {
     auto camComp = camObj->GetComponent<Camera2DComponent>();
     if (!camComp) continue;
@@ -30,7 +29,12 @@ MouseCameraSelector::GetCurrentMouseConverter() {
     if (mouseX >= dx && mouseX <= dx + dWidth && mouseY >= dy &&
         mouseY <= dy + dHeight) {
       if (!selectedCamera ||
-          camComp->renderLayer > selectedCamera->renderLayer) {
+          (camComp->GetGameObject()->GetLayer() >
+           selectedCamera->GetGameObject()->GetLayer()) ||
+          (camComp->GetGameObject()->GetLayer() ==
+               selectedCamera->GetGameObject()->GetLayer() &&
+           (camComp->GetGameObject()->GetOrderInLayer() >
+            selectedCamera->GetGameObject()->GetOrderInLayer()))) {
         selectedCamera = camComp;
       }
     }
@@ -43,7 +47,7 @@ MouseCameraSelector::GetCurrentMouseConverter() {
   }
 }
 
-std::shared_ptr<IMouseCoordinateConverter>
+std::shared_ptr<CameraMouseCoordinateConverter>
 MouseCameraSelector::GetCurrentMouseConverter(int targetLayer) {
   int mouseX, mouseY;
   if (auto mouseProvider = InputManager::GetInstance().GetMouseProvider()) {
@@ -54,12 +58,11 @@ MouseCameraSelector::GetCurrentMouseConverter(int targetLayer) {
 
   std::shared_ptr<Camera2DComponent> selectedCamera = nullptr;
 
-  // 対象レイヤーのカメラのみ
   for (auto& camObj : cameras) {
-    if (camObj->GetLayer() != targetLayer) continue;
-
     auto camComp = camObj->GetComponent<Camera2DComponent>();
     if (!camComp) continue;
+
+    if (camComp->renderLayer != targetLayer) continue;
 
     int dx = camComp->destX;
     int dy = camComp->destY;
@@ -69,7 +72,12 @@ MouseCameraSelector::GetCurrentMouseConverter(int targetLayer) {
     if (mouseX >= dx && mouseX <= dx + dWidth && mouseY >= dy &&
         mouseY <= dy + dHeight) {
       if (!selectedCamera ||
-          camComp->renderLayer > selectedCamera->renderLayer) {
+          (camComp->GetGameObject()->GetLayer() >
+           selectedCamera->GetGameObject()->GetLayer()) ||
+          (camComp->GetGameObject()->GetLayer() ==
+               selectedCamera->GetGameObject()->GetLayer() &&
+           (camComp->GetGameObject()->GetOrderInLayer() >
+            selectedCamera->GetGameObject()->GetOrderInLayer()))) {
         selectedCamera = camComp;
       }
     }

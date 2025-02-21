@@ -197,9 +197,6 @@
     <ClInclude Include="WindowManager.h">
       <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
-    <ClInclude Include="IMouseCoordinateConverter.h">
-      <Filter>ヘッダー ファイル\Input</Filter>
-    </ClInclude>
     <ClInclude Include="CameraMouseCoordinateConverter.h">
       <Filter>ヘッダー ファイル\Input</Filter>
     </ClInclude>

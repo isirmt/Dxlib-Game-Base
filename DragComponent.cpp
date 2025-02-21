@@ -4,7 +4,7 @@
 #include "ColliderComponent.h"
 #include "DxLib.h"
 #include "GameObject.h"
-#include "IMouseCoordinateConverter.h"
+#include "CameraMouseCoordinateConverter.h"
 #include "InputManager.h"
 #include "TransformComponent.h"
 
@@ -30,7 +30,7 @@ void DragComponent::Update() {
             .c_str());
   }
 
-  std::shared_ptr<IMouseCoordinateConverter> converter;
+  std::shared_ptr<CameraMouseCoordinateConverter> converter;
   if (cameraSelector) {
     converter =
         cameraSelector->GetCurrentMouseConverter(GetGameObject()->GetLayer());

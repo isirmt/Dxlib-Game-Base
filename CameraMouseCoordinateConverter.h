@@ -2,16 +2,15 @@
 #include <memory>
 
 #include "Camera2DComponent.h"
-#include "IMouseCoordinateConverter.h"
 
-class CameraMouseCoordinateConverter : public IMouseCoordinateConverter {
+class CameraMouseCoordinateConverter {
+ public:
   std::shared_ptr<Camera2DComponent> pCamera_;
 
- public:
   CameraMouseCoordinateConverter(std::shared_ptr<Camera2DComponent> _pCamera)
       : pCamera_(_pCamera) {}
 
-  void Convert(int screenX, int screenY, int& outX, int& outY) {
+  void Convert(int screenX, int screenY, int& outX, int& outY) const {
     int relativeX = screenX - pCamera_->destX;
     int relativeY = screenY - pCamera_->destY;
 

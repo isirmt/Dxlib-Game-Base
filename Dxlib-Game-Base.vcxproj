@@ -182,7 +182,6 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IKeyboardProvider.h" />
     <ClInclude Include="MouseCameraSelector.h" />
-    <ClInclude Include="IMouseCoordinateConverter.h" />
     <ClInclude Include="IMouseProvider.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MousePicker.h" />

@@ -216,13 +216,14 @@ void TopScene::Start() {
   {
     // ’è“_ƒJƒƒ‰5
     GameObjectPtr camera5 = CreateObject("camera5");
-    camera5->SetLayer(3);
+    camera5->SetLayer(5);
+    camera5->SetOrderInLayer(-10);
     camera5->AddComponent<TransformComponent>(20.f, 500.f);
     camera5->AddComponent<Camera2DComponent>(0, 0, 500, 500, 200, 200,
                                              3);
     AddObject(camera5);
     // ”»’è‚É“ü‚ê‚È‚¢ê‡CcameraSelector‚Ö‚Í“o˜^‚µ‚È‚¢
-    //cameraSelector->cameras.push_back(camera5);
+    cameraSelector->cameras.push_back(camera5);
 
     GameObjectPtr caption = CreateObject("caption");
     caption->SetLayer(0);

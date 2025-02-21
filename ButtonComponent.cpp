@@ -48,7 +48,7 @@ void ButtonComponent::Update() {
             .c_str());
   }
 
-  std::shared_ptr<IMouseCoordinateConverter> converter;
+  std::shared_ptr<CameraMouseCoordinateConverter> converter;
   if (cameraSelector) {
     converter =
         cameraSelector->GetCurrentMouseConverter(GetGameObject()->GetLayer());
