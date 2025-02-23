@@ -1,11 +1,12 @@
 #include "MousePicker.h"
 
 #include <algorithm>
+#include <tuple>
 
 #include "Camera2DComponent.h"
+#include "CameraMouseCoordinateConverter.h"
 #include "ColliderComponent.h"
 #include "MouseCameraSelector.h"
-#include "CameraMouseCoordinateConverter.h"
 
 std::shared_ptr<GameObject> MousePicker::GetTopGameObjectAtPoint(
     const std::vector<std::shared_ptr<Scene>>& scenes, int mouseScreenX,
@@ -13,8 +14,9 @@ std::shared_ptr<GameObject> MousePicker::GetTopGameObjectAtPoint(
     const std::shared_ptr<MouseCameraSelector>& cameraSelector) {
   struct Clickable {
     std::shared_ptr<GameObject> obj;
-    int effectiveLayer = 0;
-    int order = 0;
+    int cameraLayer = 0;
+    int cameraOrder = 0;
+    int objOrder = 0;
     std::shared_ptr<CameraMouseCoordinateConverter> converter;
   };
 
@@ -29,23 +31,27 @@ std::shared_ptr<GameObject> MousePicker::GetTopGameObjectAtPoint(
       if (obj->GetComponent<Camera2DComponent>()) continue;
 
       Clickable c;
-      c.obj = obj;
-      c.order = obj->GetOrderInLayer();
-      c.effectiveLayer = obj->GetLayer();
 
       c.converter = cameraSelector->GetCurrentMouseConverter(obj->GetLayer());
       if (!c.converter) {
         continue;
       }
+
+      auto cameraObj = c.converter->pCamera_->GetGameObject();
+
+      c.obj = obj;
+      c.objOrder = obj->GetOrderInLayer();
+      c.cameraLayer = cameraObj->GetLayer();
+      c.cameraOrder = cameraObj->GetOrderInLayer();
+
       clickables.push_back(c);
     }
   }
 
   std::sort(clickables.begin(), clickables.end(),
             [](const Clickable& a, const Clickable& b) {
-              if (a.effectiveLayer == b.effectiveLayer)
-                return a.order > b.order;
-              return a.effectiveLayer > b.effectiveLayer;
+              return std::tie(a.cameraLayer, a.cameraOrder, a.objOrder) >
+                     std::tie(b.cameraLayer, b.cameraOrder, b.objOrder);
             });
 
   int convertedX, convertedY;
