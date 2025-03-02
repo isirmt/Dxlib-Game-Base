@@ -18,35 +18,21 @@ Application::Application() : running(true) {
 
   windowManager = std::make_shared<WindowManager>(1280, 720);
   cameraSelector = std::make_shared<MouseCameraSelector>();
-  sceneManager = std::make_shared<SceneManager>();
+  SceneManager::GetInstance().SetCameraSelector(cameraSelector);
 
   InputManager::GetInstance().Initialize(
       std::make_shared<DxMouseProvider>(windowManager),
       std::make_shared<DxKeyboardProvider>());
 
-  ChangeScene(std::make_shared<TopScene>());
-}
-
-void Application::ChangeScene(std::shared_ptr<Scene> newScene) {
-  newScene->SetCameraSelector(cameraSelector);
-  sceneManager->ChangeScene(newScene);
-}
-
-void Application::AdditiveScene(std::shared_ptr<Scene> additiveScene) {
-  additiveScene->SetCameraSelector(cameraSelector);
-  sceneManager->AdditiveScene(additiveScene);
-}
-
-void Application::UnloadScene(std::shared_ptr<Scene> scene) {
-  sceneManager->UnloadScene(scene);
+  SceneManager::GetInstance().ChangeScene<TopScene>();
 }
 
 void Application::Update() {
   Time::GetInstance().Update();
-  sceneManager->Update();
+  SceneManager::GetInstance().Update();
 }
 
-void Application::Render() { sceneManager->Render(); }
+void Application::Render() { SceneManager::GetInstance().Render(); }
 
 std::shared_ptr<GameObject> Application::GetTopGameObjectAtPoint() {
   int mouseScreenX, mouseScreenY;
@@ -58,8 +44,9 @@ std::shared_ptr<GameObject> Application::GetTopGameObjectAtPoint() {
   }
 
   MousePicker picker;
-  return picker.GetTopGameObjectAtPoint(sceneManager->GetScenes(), mouseScreenX,
-                                        mouseScreenY, cameraSelector);
+  return picker.GetTopGameObjectAtPoint(SceneManager::GetInstance().GetScenes(),
+                                        mouseScreenX, mouseScreenY,
+                                        cameraSelector);
 }
 
 void Application::Run() {
