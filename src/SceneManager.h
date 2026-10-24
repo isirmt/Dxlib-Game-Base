@@ -3,40 +3,78 @@
 #include <vector>
 
 #include "Scene.h"
+#include "Singleton.h"
 
 /**
  * @brief シーン管理
  */
-class SceneManager {
- public:
+class SceneManager : public Singleton<SceneManager> {
+  friend class Singleton<SceneManager>;
+
+ private:
   SceneManager() = default;
+
+  std::vector<std::shared_ptr<Scene>> scenes_;
+  std::shared_ptr<MouseCameraSelector> cameraSelector;
+
+ public:
+  void SetCameraSelector(std::shared_ptr<MouseCameraSelector> _cameraSelector) {
+    cameraSelector = _cameraSelector;
+  }
 
   /**
    * @brief シーン変更
-   * @param newScene インスタンス
+   * @tparam T Scene継承の型
+   * @tparam ...Args Tのコンストラクタの引数
+   * @param ...args
+   * @return インスタンス
    */
-  void ChangeScene(std::shared_ptr<Scene> newScene) {
-    scenes_.clear();
+  template <typename T, typename... Args>
+    requires std::is_constructible_v<T, Args...> &&
+             std::is_base_of<Scene, T>::value
+  std::shared_ptr<T> ChangeScene(Args&&... args) {
+    auto newScene = std::make_shared<T>(std::forward<Args>(args)...);
     newScene->SetAdditive(false);
+    if (cameraSelector) newScene->SetCameraSelector(cameraSelector);
+    scenes_.clear();
+
     scenes_.push_back(newScene);
     newScene->Start();
+    return newScene;
   }
+
   /**
    * @brief 追加シーンの設定
-   * @param additiveScene インスタンス
+   * @tparam T Scene継承の型
+   * @tparam ...Args Tのコンストラクタの引数
+   * @param ...args
+   * @return インスタンス
    */
-  void AdditiveScene(std::shared_ptr<Scene> additiveScene) {
+  template <typename T, typename... Args>
+    requires std::is_constructible_v<T, Args...> &&
+             std::is_base_of<Scene, T>::value
+  std::shared_ptr<T> AdditiveScene(Args&&... args) {
+    auto additiveScene = std::make_shared<T>(std::forward<Args>(args)...);
     additiveScene->SetAdditive(true);
+    if (cameraSelector) additiveScene->SetCameraSelector(cameraSelector);
+
     scenes_.push_back(additiveScene);
     additiveScene->Start();
+    return additiveScene;
   }
 
   /**
    * @brief シーンの破棄
-   * @param scene 対象のシーン
+   * @tparam T 対象のScene継承の型
    */
-  void UnloadScene(std::shared_ptr<Scene> scene) {
-    scenes_.erase(std::remove(scenes_.begin(), scenes_.end(), scene),
+  template <typename T>
+    requires std::is_base_of<Scene, T>::value
+  void UnloadScene() {
+    scenes_.erase(std::remove_if(scenes_.begin(), scenes_.end(),
+                                 [](const std::shared_ptr<Scene>& scene) {
+                                   return std::dynamic_pointer_cast<T>(scene) !=
+                                          nullptr;
+                                 }),
                   scenes_.end());
   }
 
@@ -59,7 +97,4 @@ class SceneManager {
   const std::vector<std::shared_ptr<Scene>>& GetScenes() const {
     return scenes_;
   }
-
- private:
-  std::vector<std::shared_ptr<Scene>> scenes_;
 };
